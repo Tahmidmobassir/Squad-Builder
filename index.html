@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Cup 2026 — Best XI Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   CSS VARIABLES
+   ══════════════════════════════════════════ */
+:root {
+  --bg:        #080b0f;
+  --card:      #10151d;
+  --hover:     #181f2a;
+  --white:     #f0f2f5;
+  --muted:     #7a8ca8;
+  --border:    rgba(255,255,255,0.07);
+  --success:   #3dd68c;
+  --danger:    #ef4444;
+  --r:         12px;
+  --font-h:    'Bebas Neue', sans-serif;
+  --font-b:    'Outfit', sans-serif;
+  --t-primary: #cc0b1e;
+  --t-accent:  #f5c518;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--white);
+  font-family: var(--font-b); min-height: 100vh;
+  transition: background 0.5s ease;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 35% at 50% 0%, var(--t-primary-faint, rgba(204,11,30,0.07)) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 25% at 80% 100%, var(--t-accent-faint, rgba(245,197,24,0.04)) 0%, transparent 50%);
+  transition: background 0.6s ease;
+}
+
+/* ── HEADER ── */
+.header {
+  position: relative; z-index: 1;
+  text-align: center; padding: 0;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+/* Flag stripe band across top of header */
+.header-flag-bar {
+  display: flex; width: 100%; height: 7px;
+  transition: all 0.55s ease;
+}
+.header-flag-bar span { flex: 1; transition: background 0.55s ease; }
+
+/* Main content area with dynamic gradient */
+.header-body {
+  position: relative;
+  padding: 28px 24px 22px;
+  background: linear-gradient(
+    160deg,
+    var(--hdr-c1, rgba(204,11,30,0.0)) 0%,
+    var(--hdr-c2, rgba(0,0,0,0.0)) 50%,
+    var(--hdr-c3, rgba(245,197,24,0.0)) 100%
+  );
+  transition: background 0.55s ease;
+}
+/* Subtle radial glow behind the title */
+.header-body::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 65% 80% at 50% 50%,
+    var(--hdr-glow, rgba(204,11,30,0.0)) 0%, transparent 70%);
+  transition: background 0.55s ease;
+}
+
+.header-top-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; margin-bottom: 10px;
+}
+/* Flag emoji pill */
+.header-flag-pill {
+  font-size: 38px; line-height: 1;
+  opacity: 0; transform: scale(0.6);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(.34,1.56,.64,1);
+  display: inline-block;
+}
+.header-flag-pill.visible {
+  opacity: 1; transform: scale(1);
+}
+
+.header-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  transition: color 0.4s;
+}
+.header h1 {
+  font-family: var(--font-h); font-size: clamp(28px,5vw,52px);
+  letter-spacing: 4px; line-height: 1; transition: color 0.4s;
+  position: relative;
+}
+.header h1 em { color: var(--t-accent); font-style: normal; transition: color 0.4s; }
+
+/* Country name that appears below main title */
+.header-country {
+  font-family: var(--font-h);
+  font-size: clamp(18px, 3.5vw, 32px);
+  letter-spacing: 6px;
+  color: var(--hdr-name-color, transparent);
+  text-shadow: 0 0 30px var(--hdr-glow, transparent);
+  margin-top: 2px;
+  min-height: 1.2em;
+  transition: color 0.45s ease, text-shadow 0.45s ease, letter-spacing 0.45s ease;
+}
+.header-country.has-team {
+  color: var(--hdr-name-color, var(--t-accent));
+  letter-spacing: 8px;
+}
+
+/* Slogan tag under country */
+.header-slogan {
+  font-size: 11px; font-weight: 600; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 5px; min-height: 1.4em;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s, color 0.4s;
+}
+.header-slogan.visible { opacity: 1; transform: translateY(0); }
+
+.header-sub {
+  color: var(--muted); font-size: 11px; font-weight: 500;
+  letter-spacing: 3px; text-transform: uppercase; margin-top: 8px;
+}
+
+/* Bottom accent line that mirrors the flag */
+.header-accent-line {
+  height: 2px; width: 100%;
+  background: linear-gradient(to right,
+    var(--hdr-line-c1, transparent),
+    var(--hdr-line-c2, var(--t-accent)),
+    var(--hdr-line-c1, transparent));
+  opacity: 0.5;
+  transition: background 0.55s ease;
+  margin-top: 16px;
+}
+
+/* ── TEAM SLIDER ── */
+.team-section { position: relative; z-index: 1; max-width: 1180px; margin: 20px auto 0; padding: 0 18px; }
+.sec-lbl { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.team-scroll-wrap { position: relative; }
+.team-slider { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-behavior: smooth; scrollbar-width: none; }
+.team-slider::-webkit-scrollbar { display: none; }
+.team-scroll-wrap::before, .team-scroll-wrap::after { content: ''; position: absolute; top: 0; bottom: 6px; width: 40px; pointer-events: none; z-index: 3; }
+.team-scroll-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+.team-scroll-wrap::after  { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+.team-card {
+  flex: 0 0 130px; background: var(--card); border: 2px solid var(--border);
+  border-radius: var(--r); padding: 12px 10px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  transition: all .25s; position: relative; overflow: hidden; user-select: none;
+}
+.team-card::after { content: ''; position: absolute; inset: 0; background: var(--t-primary); opacity: 0; transition: opacity .25s; pointer-events: none; }
+.team-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-2px); }
+.team-card:hover::after { opacity: 0.04; }
+.team-card.active { border-color: var(--tc-primary); transform: translateY(-2px); box-shadow: 0 6px 28px rgba(0,0,0,0.5), 0 0 0 1px var(--tc-primary); }
+.team-card.active::after { opacity: 0.08; }
+.tc-flag { display: flex; width: 52px; height: 6px; border-radius: 3px; overflow: hidden; gap: 2px; }
+.tc-flag span { flex: 1; border-radius: 2px; }
+.tc-emoji { font-size: 26px; line-height: 1; }
+.tc-name { font-family: var(--font-h); font-size: 16px; letter-spacing: 2px; text-align: center; color: var(--white); transition: color .25s; }
+.team-card.active .tc-name { color: var(--tc-primary); }
+.tc-badge { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; padding: 2px 7px; border: 1px solid var(--border); border-radius: 20px; }
+
+/* ── RULES ── */
+.rules-wrap { position: relative; z-index: 1; max-width: 1180px; margin: 18px auto 0; padding: 0 18px; }
+.rules-toggle {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 13px 18px;
+  width: 100%; cursor: pointer; color: var(--white);
+  font-family: var(--font-b); font-size: 13.5px; font-weight: 600;
+  transition: background .2s;
+}
+.rules-toggle:hover { background: var(--hover); }
+.rules-toggle .pill { background: var(--t-primary); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 9px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase; transition: background .4s; }
+.rules-toggle .arr { margin-left:auto; font-size:14px; transition: transform .35s; }
+.rules-toggle.open .arr { transform: rotate(180deg); }
+.rules-body { overflow: hidden; max-height: 0; transition: max-height .42s cubic-bezier(.4,0,.2,1); }
+.rules-body.open { max-height: 600px; }
+.rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--r) var(--r); }
+.rule-card { display: flex; align-items: flex-start; gap: 12px; background: rgba(255,255,255,0.025); border-left: 3px solid var(--t-accent); border-radius: 8px; padding: 12px; transition: border-color .4s; }
+.rule-n { font-family: var(--font-h); font-size: 24px; color: var(--t-accent); line-height: 1; min-width: 22px; transition: color .4s; }
+.rule-t { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.rule-t strong { color: var(--white); display: block; margin-bottom: 2px; font-size: 12.5px; }
+
+/* ── FORMATION ── */
+.fmt-section { position: relative; z-index: 1; max-width: 1180px; margin: 18px auto 0; padding: 0 18px; }
+.fmt-btns { display:flex; gap:9px; flex-wrap:wrap; }
+.fmt-btn {
+  background: var(--card); border: 2px solid var(--border);
+  color: var(--muted); font-family: var(--font-h);
+  font-size: 20px; letter-spacing: 2px;
+  padding: 9px 22px; border-radius: 8px;
+  cursor: pointer; transition: all .2s;
+}
+.fmt-btn:hover { border-color: rgba(255,255,255,.2); color: var(--white); background: var(--hover); }
+.fmt-btn.active { border-color: var(--t-accent); color: var(--t-accent); background: rgba(255,255,255,0.04); box-shadow: 0 0 20px rgba(0,0,0,.3); transition: border-color .4s, color .4s; }
+
+/* ── STATUS BAR ── */
+.status-bar { position: relative; z-index: 1; max-width: 1180px; margin: 14px auto 0; padding: 0 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.stat-pill { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.stat-pill b { color: var(--t-accent); font-family: var(--font-h); font-size: 18px; vertical-align: middle; transition: color .4s; }
+.reset-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--font-b); font-size: 11px; font-weight: 600; padding: 7px 14px; border-radius: 8px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all .2s; margin-left: auto; }
+.reset-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+/* ── COMPLETE BANNER ── */
+.complete-wrap { position:relative;z-index:1;max-width:1180px;margin:14px auto 0;padding:0 18px;display:none; }
+.complete-wrap.show { display:block; }
+.complete-inner { background: linear-gradient(130deg, color-mix(in srgb, var(--t-primary) 18%, transparent), color-mix(in srgb, var(--t-accent) 8%, transparent)); border: 1px solid color-mix(in srgb, var(--t-accent) 35%, transparent); border-radius: var(--r); padding: 13px 24px; text-align: center; }
+.complete-inner h3 { font-family: var(--font-h); font-size: 22px; letter-spacing: 4px; color: var(--t-accent); transition: color .4s; }
+.complete-inner p { color: var(--muted); font-size: 11px; margin-top: 3px; }
+
+/* ── MAIN GRID ── */
+.main { position: relative; z-index: 1; max-width: 1180px; margin: 16px auto 50px; padding: 0 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+@media (max-width: 820px) { .main { grid-template-columns: 1fr; } }
+
+/* ── PITCH ── */
+.pitch-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; }
+.card-title { font-family: var(--font-h); font-size: 16px; letter-spacing: 2.5px; text-align: center; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.card-title .team-tag { font-size: 12px; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 2px 10px; color: var(--t-accent); transition: color .4s; letter-spacing: 2px; }
+.pitch { position: relative; width: 100%; padding-bottom: 125%; background: #1a4727; border-radius: 7px; overflow: hidden; border: 2px solid rgba(255,255,255,0.08); }
+.pitch-svg { position:absolute; inset:0; width:100%; height:100%; }
+.players-layer { position:absolute; inset:0; }
+
+/* Player dots */
+.p-dot {
+  position: absolute; transform: translate(-50%,-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  z-index: 10; animation: popIn .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn {
+  from { transform: translate(-50%,-50%) scale(0); opacity:0; }
+  to   { transform: translate(-50%,-50%) scale(1); opacity:1; }
+}
+.p-circle {
+  width: 33px; height: 33px; border-radius: 50%;
+  background: var(--t-primary);
+  border: 2.5px solid rgba(255,255,255,.85);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-h); font-size: 13px; color: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,.55);
+  transition: background .4s;
+}
+/* Empty slot — clickable when formation active */
+.p-dot.empty-slot { cursor: pointer; }
+.p-dot.empty-slot .p-circle {
+  background: rgba(255,255,255,.06);
+  border: 2px dashed rgba(255,255,255,.3);
+  color: rgba(255,255,255,.35); font-size: 8px;
+  transition: all .2s;
+}
+.p-dot.empty-slot:hover .p-circle {
+  background: rgba(255,255,255,.12);
+  border-color: var(--t-accent);
+  color: var(--t-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--t-accent) 25%, transparent);
+}
+.p-dot.empty-slot .p-slot-lbl { color: rgba(255,255,255,.35); font-size: 7px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.p-dot.empty-slot:hover .p-slot-lbl { color: var(--t-accent); }
+
+/* Filled slot — clickable to move */
+.p-dot.filled-slot { cursor: pointer; }
+.p-dot.filled-slot:hover .p-circle {
+  box-shadow: 0 0 0 3px var(--t-accent), 0 3px 10px rgba(0,0,0,.55);
+}
+.p-name {
+  background: rgba(0,0,0,.8); color: #fff;
+  font-size: 8.5px; font-weight: 600;
+  padding: 2px 6px; border-radius: 3px;
+  white-space: nowrap; max-width: 80px;
+  overflow: hidden; text-overflow: ellipsis;
+  letter-spacing: .3px; text-transform: uppercase;
+  text-align: center;
+}
+
+.no-fmt-overlay, .no-team-overlay {
+  position: absolute; inset:0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  border-radius: 7px; z-index: 25;
+}
+.no-fmt-overlay { background: rgba(8,11,15,.9); z-index: 25; }
+.no-team-overlay { background: rgba(8,11,15,.92); z-index: 26; }
+.no-fmt-overlay .ico, .no-team-overlay .ico { font-size: 36px; }
+.no-fmt-overlay p, .no-team-overlay p { color: var(--muted); font-size: 13px; text-align: center; line-height: 1.65; }
+
+/* ── SQUAD TABLE ── */
+.squad-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.squad-hdr { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid var(--border); }
+.squad-hdr-title { font-family: var(--font-h); font-size: 16px; letter-spacing: 2.5px; }
+.xi-tally { font-size: 12px; font-weight: 600; color: var(--muted); }
+.xi-tally strong { color: var(--t-accent); font-family: var(--font-h); font-size: 17px; transition: color .4s; }
+.tbl-scroll { overflow-y: auto; max-height: 580px; }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+thead th { background: rgba(255,255,255,.035); padding: 9px 11px; text-align: left; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); position: sticky; top:0; z-index:5; border-bottom: 1px solid var(--border); }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; cursor: pointer; }
+tbody tr:hover { background: rgba(255,255,255,.035); }
+tbody tr.selected-row { background: color-mix(in srgb, var(--t-primary) 10%, transparent); border-bottom-color: color-mix(in srgb, var(--t-primary) 18%, transparent); }
+tbody tr.selected-row:hover { background: color-mix(in srgb, var(--t-primary) 14%, transparent); }
+td { padding: 8px 11px; vertical-align: middle; }
+.td-num { color: var(--muted); font-size: 10px; width: 26px; }
+.td-name { font-weight: 500; font-size: 12.5px; }
+.td-name.in-xi { color: var(--t-accent); transition: color .4s; }
+.empty-squad-row td { text-align:center; padding: 36px 20px; color: var(--muted); font-size: 13px; }
+.pos-badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: .8px; }
+.pos-GK  { background: rgba(245,197,24,.18); color: #fcd34d; }
+.pos-DEF { background: rgba(59,130,246,.18);  color: #93c5fd; }
+.pos-MID { background: rgba(16,185,129,.18);  color: #6ee7b7; }
+.pos-FWD { background: rgba(239,68,68,.18);   color: #fca5a5; }
+/* Row status indicator instead of Y/N input */
+.row-status { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all .18s; background: rgba(255,255,255,.03); }
+tbody tr:hover .row-status:not(.in-xi-status) { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.06); }
+.row-status.in-xi-status { background: color-mix(in srgb, var(--success) 15%, transparent); border-color: var(--success); color: var(--success); }
+
+/* ── SLOT PICKER MODAL ── */
+.slot-modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.8);
+  z-index: 200; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .22s;
+}
+.slot-modal-backdrop.open { opacity: 1; pointer-events: all; }
+.slot-modal {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; min-width: 300px; max-width: 400px;
+  width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,.75);
+  transform: translateY(14px); transition: transform .22s;
+}
+.slot-modal-backdrop.open .slot-modal { transform: translateY(0); }
+.slot-modal-title { font-family: var(--font-h); font-size: 18px; letter-spacing: 2px; margin-bottom: 4px; color: var(--t-accent); transition: color .4s; }
+.slot-modal-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
+.slot-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.slot-btn {
+  background: rgba(255,255,255,.04); border: 1px solid var(--border);
+  color: var(--white); font-family: var(--font-h); font-size: 16px;
+  letter-spacing: 1px; padding: 10px 6px; border-radius: 8px;
+  cursor: pointer; transition: all .15s; text-align: center;
+}
+.slot-btn:hover:not(:disabled) { border-color: var(--t-accent); color: var(--t-accent); background: rgba(255,255,255,.07); }
+.slot-btn:disabled { opacity: .32; cursor: not-allowed; }
+.slot-btn.occupied { opacity: .32; cursor: not-allowed; }
+.slot-btn.current-slot { border-color: var(--success); color: var(--success); background: color-mix(in srgb, var(--success) 10%, transparent); }
+.slot-btn .slot-occupant { font-size: 8px; font-family: var(--font-b); font-weight: 600; color: var(--muted); letter-spacing: .5px; display: block; margin-top: 2px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.slot-modal-cancel { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--font-b); font-size: 12px; font-weight: 600; padding: 9px; border-radius: 8px; cursor: pointer; transition: all .15s; }
+.slot-modal-cancel:hover { border-color: var(--danger); color: var(--danger); }
+
+/* ── SAVE BUTTON ── */
+.save-btn {
+  background: linear-gradient(135deg, var(--t-primary), color-mix(in srgb, var(--t-primary) 70%, var(--t-accent)));
+  border: none; color: #fff;
+  font-family: var(--font-h); font-size: 19px; letter-spacing: 2px;
+  padding: 11px 26px; border-radius: 8px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all .25s; box-shadow: 0 4px 18px rgba(0,0,0,.4);
+  transition: background .4s, transform .15s, box-shadow .15s;
+}
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.5); }
+.save-btn:active { transform: translateY(0); }
+.save-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.save-btn .save-ico { font-size: 18px; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #171c26; color: var(--white); padding: 11px 20px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(0,0,0,.6); display: flex; align-items: center; gap: 8px;
+  opacity: 0; pointer-events: none; transition: opacity .28s; z-index: 999; white-space: nowrap;
+}
+#toast.show { opacity: 1; }
+#toast.t-err  { border-color: var(--danger); }
+#toast.t-ok   { border-color: var(--success); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <!-- Flag stripe bar at very top -->
+  <div class="header-flag-bar" id="headerFlagBar">
+    <span id="hfb1" style="background:rgba(255,255,255,0.04)"></span>
+    <span id="hfb2" style="background:rgba(255,255,255,0.04)"></span>
+    <span id="hfb3" style="background:rgba(255,255,255,0.04)"></span>
+  </div>
+
+  <div class="header-body">
+    <div class="header-eyebrow">FIFA World Cup 2026</div>
+
+    <!-- Emoji + Title row -->
+    <div class="header-top-row">
+      <span class="header-flag-pill" id="headerFlagEmoji"></span>
+      <h1 id="mainTitle">WORLD CUP <em id="titleTeam">BEST XI</em></h1>
+      <span class="header-flag-pill" id="headerFlagEmoji2"></span>
+    </div>
+
+    <!-- Country name (hidden until team selected) -->
+    <div class="header-country" id="headerCountry"></div>
+
+    <!-- Slogan (hidden until team selected) -->
+    <div class="header-slogan" id="headerSlogan"></div>
+
+    <div class="header-sub">Squad Selector · Pick Your Starting Eleven</div>
+
+    <div class="header-accent-line" id="headerAccentLine"></div>
+  </div>
+</header>
+
+<!-- TEAM SLIDER -->
+<div class="team-section">
+  <div class="sec-lbl">🌍 Choose National Team</div>
+  <div class="team-scroll-wrap">
+    <div class="team-slider" id="teamSlider"></div>
+  </div>
+</div>
+
+<!-- RULES -->
+<div class="rules-wrap">
+  <button class="rules-toggle open" id="rulesBtn" onclick="toggleRules()">
+    <span>📋</span>
+    <span>How to Use &amp; Rules</span>
+    <span class="pill" id="rulesTag">Guide</span>
+    <span class="arr" id="arr">▼</span>
+  </button>
+  <div class="rules-body open" id="rulesBody">
+    <div class="rules-grid">
+      <div class="rule-card"><div class="rule-n">01</div><div class="rule-t"><strong>Choose a Team</strong>Select any of the 9 national teams from the slider. Squad list loads automatically.</div></div>
+      <div class="rule-card"><div class="rule-n">02</div><div class="rule-t"><strong>Choose a Formation</strong>Pick a tactical formation. The pitch unlocks and empty position slots appear.</div></div>
+      <div class="rule-card"><div class="rule-n">03</div><div class="rule-t"><strong>Click a Position Slot</strong>Tap any empty slot on the pitch — a panel opens showing eligible players for that position. Click a player to place them.</div></div>
+      <div class="rule-card"><div class="rule-n">04</div><div class="rule-t"><strong>Or Click from the Squad List</strong>Tap any player in the squad table to quickly add them. They auto-fill the best matching slot.</div></div>
+      <div class="rule-card"><div class="rule-n">05</div><div class="rule-t"><strong>Move a Placed Player</strong>Click any filled player on the pitch to open the slot picker and reassign them to a different position.</div></div>
+      <div class="rule-card"><div class="rule-n">06</div><div class="rule-t"><strong>Remove a Player</strong>Click a placed player in the squad table (highlighted in gold) to remove them from your XI.</div></div>
+      <div class="rule-card"><div class="rule-n">07</div><div class="rule-t"><strong>XI Rules</strong>Exactly 11 players, exactly 1 goalkeeper. Formation or team switch resets your XI.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FORMATION -->
+<div class="fmt-section">
+  <div class="sec-lbl">⚽ Select Formation</div>
+  <div class="fmt-btns" id="fmtBtns">
+    <button class="fmt-btn" onclick="selectFormation('4-3-3')">4-3-3</button>
+    <button class="fmt-btn" onclick="selectFormation('4-2-3-1')">4-2-3-1</button>
+    <button class="fmt-btn" onclick="selectFormation('4-4-2')">4-4-2</button>
+    <button class="fmt-btn" onclick="selectFormation('4-3-2-1')">4-3-2-1</button>
+    <button class="fmt-btn" onclick="selectFormation('4-1-4-1')">4-1-4-1</button>
+    <button class="fmt-btn" onclick="selectFormation('4-5-1')">4-5-1</button>
+    <button class="fmt-btn" onclick="selectFormation('3-5-2')">3-5-2</button>
+    <button class="fmt-btn" onclick="selectFormation('3-4-3')">3-4-3</button>
+    <button class="fmt-btn" onclick="selectFormation('3-4-2-1')">3-4-2-1</button>
+    <button class="fmt-btn" onclick="selectFormation('5-3-2')">5-3-2</button>
+    <button class="fmt-btn" onclick="selectFormation('5-4-1')">5-4-1</button>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="stat-pill">Selected: <b id="selCount">0</b> / 11</div>
+  <div class="stat-pill">Formation: <b id="fmtDisplay">—</b></div>
+  <button class="reset-btn" onclick="resetAll()">⟳ Reset XI</button>
+</div>
+
+<!-- COMPLETE BANNER -->
+<div class="complete-wrap" id="completeBanner">
+  <div class="complete-inner">
+    <h3 id="completeMsg">⚽ YOUR XI IS COMPLETE!</h3>
+    <p>Your starting eleven is locked in. Save it as a JPG below.</p>
+    <button class="save-btn" id="saveBtn" onclick="saveLineupJPG()" style="margin-top:12px;">
+      <span class="save-ico">📸</span> Save Lineup as JPG
+    </button>
+  </div>
+</div>
+
+<!-- MAIN: PITCH + TABLE -->
+<div class="main">
+
+  <!-- PITCH -->
+  <div class="pitch-card">
+    <div class="card-title">
+      STARTING XI
+      <span class="team-tag" id="pitchTeamTag">—</span>
+    </div>
+    <div class="pitch" id="pitch">
+      <svg class="pitch-svg" viewBox="0 0 100 125" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="125" fill="#1a4727"/>
+        <rect x="0" y="0"   width="100" height="12.5" fill="#1e5430" opacity=".55"/>
+        <rect x="0" y="25"  width="100" height="12.5" fill="#1e5430" opacity=".55"/>
+        <rect x="0" y="50"  width="100" height="12.5" fill="#1e5430" opacity=".55"/>
+        <rect x="0" y="75"  width="100" height="12.5" fill="#1e5430" opacity=".55"/>
+        <rect x="0" y="100" width="100" height="12.5" fill="#1e5430" opacity=".55"/>
+        <rect x="3" y="2" width="94" height="121" fill="none" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <line x1="3" y1="62.5" x2="97" y2="62.5" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <circle cx="50" cy="62.5" r="11" fill="none" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <circle cx="50" cy="62.5" r=".9" fill="rgba(255,255,255,.55)"/>
+        <rect x="22" y="2"  width="56" height="20" fill="none" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <rect x="35" y="2"  width="30" height="9"  fill="none" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <rect x="41" y="0"  width="18" height="4"  fill="none" stroke="rgba(255,255,255,.5)"  stroke-width=".8"/>
+        <circle cx="50" cy="14" r=".8" fill="rgba(255,255,255,.55)"/>
+        <path d="M 37 22 A 13 13 0 0 0 63 22" fill="none" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <rect x="22" y="103" width="56" height="20" fill="none" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <rect x="35" y="114" width="30" height="9"  fill="none" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <rect x="41" y="121" width="18" height="4"  fill="none" stroke="rgba(255,255,255,.5)"  stroke-width=".8"/>
+        <circle cx="50" cy="111" r=".8" fill="rgba(255,255,255,.55)"/>
+        <path d="M 37 103 A 13 13 0 0 1 63 103" fill="none" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
+        <path d="M 3 6 A 4 4 0 0 0 7 2"    fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".7"/>
+        <path d="M 93 2 A 4 4 0 0 0 97 6"   fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".7"/>
+        <path d="M 3 119 A 4 4 0 0 1 7 123"  fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".7"/>
+        <path d="M 97 119 A 4 4 0 0 0 93 123" fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".7"/>
+      </svg>
+      <div class="players-layer" id="playersLayer"></div>
+      <div class="no-team-overlay" id="teamOverlay">
+        <div class="ico">🌍</div>
+        <p>Select a national team<br>from the slider above</p>
+      </div>
+      <div class="no-fmt-overlay" id="fmtOverlay" style="display:none;">
+        <div class="ico">🏟️</div>
+        <p>Pick a formation above<br>to unlock the pitch</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SQUAD TABLE -->
+  <div class="squad-card">
+    <div class="squad-hdr">
+      <div class="squad-hdr-title">SQUAD LIST</div>
+      <div class="xi-tally">XI: <strong id="xiCount">0</strong> / 11</div>
+    </div>
+    <div class="tbl-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player Name</th>
+            <th>Pos</th>
+            <th>✓</th>
+          </tr>
+        </thead>
+        <tbody id="squadBody">
+          <tr class="empty-squad-row"><td colspan="4">← Select a team to load squad</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- SLOT PICKER MODAL (for clicking position on pitch OR moving placed player) -->
+<div class="slot-modal-backdrop" id="slotModalBackdrop" onclick="closeSlotModalOnBackdrop(event)">
+  <div class="slot-modal" id="slotModal">
+    <div class="slot-modal-title" id="slotModalTitle">SELECT PLAYER</div>
+    <div class="slot-modal-sub" id="slotModalSub"></div>
+    <div class="slot-grid" id="slotModalContent"></div>
+    <button class="slot-modal-cancel" onclick="closeSlotModal()">✕ Cancel</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><span id="tIco">⚠️</span><span id="tMsg"></span></div>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  TEAM DATA  — 2026 FIFA World Cup squads                         ║
+// ║  Squad numbers are per official FIFA 2026 submissions            ║
+// ╚══════════════════════════════════════════════════════════════════╝
+const TEAMS = {
+
+  // ─────────────────── BRAZIL ───────────────────
+  brazil: {
+    id:'brazil', name:'Brazil', emoji:'🇧🇷', slogan:'A Seleção',
+    primary:'#009C3B', accent:'#FEDF00', flag:['#009C3B','#FEDF00','#002776'],
+    squad:[
+      { num:1,  name:'Ederson',            pos:'GK',  grp:'GK'  },
+      { num:2,  name:'Bento',              pos:'GK',  grp:'GK'  },
+      { num:3,  name:'Alisson',            pos:'GK',  grp:'GK'  },
+      { num:4,  name:'Danilo Soares',      pos:'RB',  grp:'DEF' },
+      { num:5,  name:'Wesley',             pos:'RB',  grp:'DEF' },
+      { num:6,  name:'Marquinhos',         pos:'CB',  grp:'DEF' },
+      { num:7,  name:'Bremer',             pos:'CB',  grp:'DEF' },
+      { num:8,  name:'G. Magalhães',       pos:'CB',  grp:'DEF' },
+      { num:9,  name:'Ibañez',             pos:'CB',  grp:'DEF' },
+      { num:10, name:'Léo Pereira',        pos:'CB',  grp:'DEF' },
+      { num:11, name:'D. Santos',          pos:'LB',  grp:'DEF' },
+      { num:12, name:'Casemiro',           pos:'CDM', grp:'MID' },
+      { num:13, name:'B. Guimarães',       pos:'CM',  grp:'MID' },
+      { num:14, name:'Andrey Santos',      pos:'CM',  grp:'MID' },
+      { num:15, name:'Fabinho',            pos:'CDM', grp:'MID' },
+      { num:16, name:'Gabriel Sara',       pos:'CM',  grp:'MID' },
+      { num:17, name:'Danilo',             pos:'CM',  grp:'MID' },
+      { num:18, name:'Vinícius Jr.',       pos:'LW',  grp:'FWD' },
+      { num:19, name:'Raphinha',           pos:'RW',  grp:'FWD' },
+      { num:20, name:'Martinelli',         pos:'LW',  grp:'FWD' },
+      { num:21, name:'João Pedro',         pos:'ST',  grp:'FWD' },
+      { num:22, name:'M. Cunha',           pos:'ST',  grp:'FWD' },
+      { num:23, name:'L. Henrique',        pos:'RW',  grp:'FWD' },
+      { num:24, name:'Endrick',            pos:'ST',  grp:'FWD' },
+      { num:25, name:'Igor Thiago',        pos:'ST',  grp:'FWD' },
+      { num:26, name:'Rodrygo',            pos:'RW',  grp:'FWD' },
+    ]
+  },
+
+  // ─────────────────── FRANCE ───────────────────
+  france: {
+    id:'france', name:'France', emoji:'🇫🇷', slogan:'Les Bleus',
+    primary:'#003189', accent:'#ED2939', flag:['#003189','#FFFFFF','#ED2939'],
+    squad:[
+      { num:1,  name:'Maignan',            pos:'GK',  grp:'GK'  },
+      { num:2,  name:'Brice Samba',        pos:'GK',  grp:'GK'  },
+      { num:3,  name:'Chevalier',          pos:'GK',  grp:'GK'  },
+      { num:4,  name:'Koundé',             pos:'RB',  grp:'DEF' },
+      { num:5,  name:'T. Hernandez',       pos:'LB',  grp:'DEF' },
+      { num:6,  name:'L. Hernandez',       pos:'CB',  grp:'DEF' },
+      { num:7,  name:'Upamecano',          pos:'CB',  grp:'DEF' },
+      { num:8,  name:'Konaté',             pos:'CB',  grp:'DEF' },
+      { num:9,  name:'Malo Gusto',         pos:'RB',  grp:'DEF' },
+      { num:10, name:'Saliba',             pos:'CB',  grp:'DEF' },
+      { num:11, name:'Lacroix',            pos:'CB',  grp:'DEF' },
+      { num:12, name:'Tchouaméni',         pos:'CDM', grp:'MID' },
+      { num:13, name:'Camavinga',          pos:'CM',  grp:'MID' },
+      { num:14, name:'Rabiot',             pos:'CM',  grp:'MID' },
+      { num:15, name:'Kanté',              pos:'CDM', grp:'MID' },
+      { num:16, name:'Manu Koné',          pos:'CM',  grp:'MID' },
+      { num:17, name:'Zaïre-Emery',        pos:'CM',  grp:'MID' },
+      { num:18, name:'Cherki',             pos:'CAM', grp:'MID' },
+      { num:19, name:'Mbappé',             pos:'ST',  grp:'FWD' },
+      { num:20, name:'Dembélé',            pos:'RW',  grp:'FWD' },
+      { num:21, name:'Olise',              pos:'RW',  grp:'FWD' },
+      { num:22, name:'Barcola',            pos:'LW',  grp:'FWD' },
+      { num:23, name:'M. Thuram',          pos:'ST',  grp:'FWD' },
+      { num:24, name:'Kolo Muani',         pos:'ST',  grp:'FWD' },
+      { num:25, name:'Désiré Doué',        pos:'CAM', grp:'MID' },
+      { num:26, name:'Griezmann',          pos:'ST',  grp:'FWD' },
+    ]
+  },
+
+  // ─────────────────── ARGENTINA ───────────────────
+  argentina: {
+    id:'argentina', name:'Argentina', emoji:'🇦🇷', slogan:'La Albiceleste',
+    primary:'#74ACDF', accent:'#FFFFFF', flag:['#74ACDF','#FFFFFF','#74ACDF'],
+    squad:[
+      { num:1,  name:'E. Martínez',        pos:'GK',  grp:'GK'  },
+      { num:2,  name:'G. Rulli',           pos:'GK',  grp:'GK'  },
+      { num:3,  name:'W. Benítez',         pos:'GK',  grp:'GK'  },
+      { num:4,  name:'N. Molina',          pos:'RB',  grp:'DEF' },
+      { num:5,  name:'Montiel',            pos:'RB',  grp:'DEF' },
+      { num:6,  name:'C. Romero',          pos:'CB',  grp:'DEF' },
+      { num:7,  name:'L. Martínez',        pos:'CB',  grp:'DEF' },
+      { num:8,  name:'Otamendi',           pos:'CB',  grp:'DEF' },
+      { num:9,  name:'Senesi',             pos:'CB',  grp:'DEF' },
+      { num:10, name:'Tagliafico',         pos:'LB',  grp:'DEF' },
+      { num:11, name:'Acuña',              pos:'LB',  grp:'DEF' },
+      { num:12, name:'De Paul',            pos:'CM',  grp:'MID' },
+      { num:13, name:'E. Fernández',       pos:'CM',  grp:'MID' },
+      { num:14, name:'Mac Allister',       pos:'CM',  grp:'MID' },
+      { num:15, name:'Paredes',            pos:'CDM', grp:'MID' },
+      { num:16, name:'Palacios',           pos:'CM',  grp:'MID' },
+      { num:17, name:'Almada',             pos:'CAM', grp:'MID' },
+      { num:18, name:'Nico Paz',           pos:'CAM', grp:'MID' },
+      { num:19, name:'Lo Celso',           pos:'CAM', grp:'MID' },
+      { num:20, name:'Messi',              pos:'RW',  grp:'FWD' },
+      { num:21, name:'J. Álvarez',         pos:'ST',  grp:'FWD' },
+      { num:22, name:'L. Martínez',        pos:'ST',  grp:'FWD' },
+      { num:23, name:'N. González',        pos:'LW',  grp:'FWD' },
+      { num:24, name:'Garnacho',           pos:'LW',  grp:'FWD' },
+      { num:25, name:'Á. Correa',          pos:'ST',  grp:'FWD' },
+      { num:26, name:'G. Simeone',         pos:'LW',  grp:'FWD' },
+    ]
+  },
+
+  // ─────────────────── GERMANY ───────────────────
+  germany: {
+    id:'germany', name:'Germany', emoji:'🇩🇪', slogan:'Die Mannschaft',
+    primary:'#DD0000', accent:'#FFCE00', flag:['#000000','#DD0000','#FFCE00'],
+    squad:[
+      { num:1,  name:'O. Baumann',         pos:'GK',  grp:'GK'  },
+      { num:2,  name:'Nübel',              pos:'GK',  grp:'GK'  },
+      { num:3,  name:'Urbig',              pos:'GK',  grp:'GK'  },
+      { num:4,  name:'Kimmich',            pos:'RB',  grp:'DEF' },
+      { num:5,  name:'Rüdiger',            pos:'CB',  grp:'DEF' },
+      { num:6,  name:'Tah',                pos:'CB',  grp:'DEF' },
+      { num:7,  name:'Schlotterbeck',      pos:'CB',  grp:'DEF' },
+      { num:8,  name:'Raum',               pos:'LB',  grp:'DEF' },
+      { num:9,  name:'W. Anton',           pos:'CB',  grp:'DEF' },
+      { num:10, name:'Thiaw',              pos:'CB',  grp:'DEF' },
+      { num:11, name:'N. Brown',           pos:'LB',  grp:'DEF' },
+      { num:12, name:'Vagnoman',           pos:'RB',  grp:'DEF' },
+      { num:13, name:'P. Groß',            pos:'CM',  grp:'MID' },
+      { num:14, name:'Pavlović',           pos:'CDM', grp:'MID' },
+      { num:15, name:'Goretzka',           pos:'CM',  grp:'MID' },
+      { num:16, name:'A. Stach',           pos:'CDM', grp:'MID' },
+      { num:17, name:'Musiala',            pos:'CAM', grp:'MID' },
+      { num:18, name:'Wirtz',              pos:'CAM', grp:'MID' },
+      { num:19, name:'Havertz',            pos:'ST',  grp:'FWD' },
+      { num:20, name:'Sané',               pos:'RW',  grp:'FWD' },
+      { num:21, name:'D. Undav',           pos:'ST',  grp:'FWD' },
+      { num:22, name:'K. Schade',          pos:'RW',  grp:'FWD' },
+      { num:23, name:'Gnabry',             pos:'RW',  grp:'FWD' },
+      { num:24, name:'Führich',            pos:'LW',  grp:'FWD' },
+      { num:25, name:'Leweling',           pos:'LW',  grp:'FWD' },
+      { num:26, name:'L. Karl',            pos:'ST',  grp:'FWD' },
+    ]
+  },
+
+  // ─────────────────── SPAIN ───────────────────
+  spain: {
+    id:'spain', name:'Spain', emoji:'🇪🇸', slogan:'La Roja',
+    primary:'#CC0B1E', accent:'#F5C518', flag:['#CC0B1E','#F5C518','#CC0B1E'],
+    squad:[
+      { num:1,  name:'Unai Simón',         pos:'GK',  grp:'GK'  },
+      { num:2,  name:'David Raya',         pos:'GK',  grp:'GK'  },
+      { num:3,  name:'Joan García',        pos:'GK',  grp:'GK'  },
+      { num:4,  name:'Pedro Porro',        pos:'RB',  grp:'DEF' },
+      { num:5,  name:'Llorente',           pos:'RB',  grp:'DEF' },
+      { num:6,  name:'Cucurella',          pos:'LB',  grp:'DEF' },
+      { num:7,  name:'Grimaldo',           pos:'LB',  grp:'DEF' },
+      { num:8,  name:'Pau Cubarsí',        pos:'CB',  grp:'DEF' },
+      { num:9,  name:'Dean Huijsen',       pos:'CB',  grp:'DEF' },
+      { num:10, name:'Laporte',            pos:'CB',  grp:'DEF' },
+      { num:11, name:'Le Normand',         pos:'CB',  grp:'DEF' },
+      { num:12, name:'Rodri',              pos:'CDM', grp:'MID' },
+      { num:13, name:'Zubimendi',          pos:'CDM', grp:'MID' },
+      { num:14, name:'Pedri',              pos:'CM',  grp:'MID' },
+      { num:15, name:'Fabián Ruiz',        pos:'CM',  grp:'MID' },
+      { num:16, name:'Gavi',               pos:'CM',  grp:'MID' },
+      { num:17, name:'Fermín López',       pos:'CAM', grp:'MID' },
+      { num:18, name:'Álex Baena',         pos:'CAM', grp:'MID' },
+      { num:19, name:'Dani Olmo',          pos:'CAM', grp:'MID' },
+      { num:20, name:'Lamine Yamal',       pos:'RW',  grp:'FWD' },
+      { num:21, name:'Nico Williams',      pos:'LW',  grp:'FWD' },
+      { num:22, name:'Morata',             pos:'ST',  grp:'FWD' },
+      { num:23, name:'Oyarzabal',          pos:'ST',  grp:'FWD' },
+      { num:24, name:'Ferran Torres',      pos:'RW',  grp:'FWD' },
+      { num:25, name:'Ayoze Pérez',        pos:'ST',  grp:'FWD' },
+      { num:26, name:'Yéremy Pino',        pos:'RW',  grp:'FWD' },
+    ]
+  },
+
+  // ─────────────────── PORTUGAL ───────────────────
+  portugal: {
+    id:'portugal', name:'Portugal', emoji:'🇵🇹', slogan:'A Seleção das Quinas',
+    primary:'#006600', accent:'#FF0000', flag:['#006600','#FF0000','#006600'],
+    squad:[
+      { num:1,  name:'Diogo Costa',        pos:'GK',  grp:'GK'  },
+      { num:2,  name:'José Sá',            pos:'GK',  grp:'GK'  },
+      { num:3,  name:'Rui Silva',          pos:'GK',  grp:'GK'  },
+      { num:4,  name:'Diogo Dalot',        pos:'RB',  grp:'DEF' },
+      { num:5,  name:'João Cancelo',       pos:'RB',  grp:'DEF' },
+      { num:6,  name:'Nuno Mendes',        pos:'LB',  grp:'DEF' },
+      { num:7,  name:'G. Inácio',          pos:'CB',  grp:'DEF' },
+      { num:8,  name:'Renato Veiga',       pos:'CB',  grp:'DEF' },
+      { num:9,  name:'A. Silva',           pos:'CB',  grp:'DEF' },
+      { num:10, name:'T. Araújo',          pos:'CB',  grp:'DEF' },
+      { num:11, name:'B. Fernandes',       pos:'CAM', grp:'MID' },
+      { num:12, name:'Vitinha',            pos:'CM',  grp:'MID' },
+      { num:13, name:'João Neves',         pos:'CDM', grp:'MID' },
+      { num:14, name:'Rúben Neves',        pos:'CDM', grp:'MID' },
+      { num:15, name:'Samu Costa',         pos:'CDM', grp:'MID' },
+      { num:16, name:'M. Fernandes',       pos:'CM',  grp:'MID' },
+      { num:17, name:'P. Gonçalves',       pos:'CAM', grp:'MID' },
+      { num:18, name:'R. Mora',            pos:'CAM', grp:'MID' },
+      { num:19, name:'Cristiano Ronaldo',  pos:'ST',  grp:'FWD' },
+      { num:20, name:'Rafael Leão',        pos:'LW',  grp:'FWD' },
+      { num:21, name:'Pedro Neto',         pos:'RW',  grp:'FWD' },
+      { num:22, name:'F. Conceição',       pos:'RW',  grp:'FWD' },
+      { num:23, name:'Trincão',            pos:'RW',  grp:'FWD' },
+      { num:24, name:'João Félix',         pos:'CAM', grp:'MID' },
+      { num:25, name:'G. Ramos',           pos:'ST',  grp:'FWD' },
+      { num:26, name:'Ricardo Horta',      pos:'LW',  grp:'FWD' },
+    ]
+  },
+
+  // ─────────────────── CROATIA ───────────────────
+  croatia: {
+    id:'croatia', name:'Croatia', emoji:'🇭🇷', slogan:'Vatreni',
+    primary:'#FF0000', accent:'#003DA5', flag:['#FF0000','#FFFFFF','#003DA5'],
+    squad:[
+      { num:1,  name:'Livaković',          pos:'GK',  grp:'GK'  },
+      { num:2,  name:'Kotarski',           pos:'GK',  grp:'GK'  },
+      { num:3,  name:'Gvardiol',           pos:'CB',  grp:'DEF' },
+      { num:4,  name:'Ćaleta-Car',         pos:'CB',  grp:'DEF' },
+      { num:5,  name:'J. Šutalo',          pos:'CB',  grp:'DEF' },
+      { num:6,  name:'Stanišić',           pos:'RB',  grp:'DEF' },
+      { num:7,  name:'Pongračić',          pos:'CB',  grp:'DEF' },
+      { num:8,  name:'K. Jakić',           pos:'CDM', grp:'MID' },
+      { num:9,  name:'M. Erlić',           pos:'CB',  grp:'DEF' },
+      { num:10, name:'L. Vušković',        pos:'CB',  grp:'DEF' },
+      { num:11, name:'I. Smolčić',         pos:'RB',  grp:'DEF' },
+      { num:12, name:'Modrić',             pos:'CM',  grp:'MID' },
+      { num:13, name:'M. Pašalić',         pos:'CM',  grp:'MID' },
+      { num:14, name:'N. Vlašić',          pos:'CAM', grp:'MID' },
+      { num:15, name:'Lovro Majer',        pos:'CAM', grp:'MID' },
+      { num:16, name:'L. Sučić',           pos:'CM',  grp:'MID' },
+      { num:17, name:'Baturina',           pos:'CAM', grp:'MID' },
+      { num:18, name:'P. Sučić',           pos:'CM',  grp:'MID' },
+      { num:19, name:'N. Moro',            pos:'CDM', grp:'MID' },
+      { num:20, name:'T. Fruk',            pos:'ST',  grp:'FWD' },
+      { num:21, name:'Perišić',            pos:'LW',  grp:'FWD' },
+      { num:22, name:'Kramarić',           pos:'ST',  grp:'FWD' },
+      { num:23, name:'Budimir',            pos:'ST',  grp:'FWD' },
+      { num:24, name:'Marco Pašalić',      pos:'RW',  grp:'FWD' },
+      { num:25, name:'P. Musa',            pos:'ST',  grp:'FWD' },
+      { num:26, name:'Matanović',          pos:'ST',  grp:'FWD' },
+    ]
+  },
+
+  // ─────────────────── NETHERLANDS ───────────────────
+  netherlands: {
+    id:'netherlands', name:'Netherlands', emoji:'🇳🇱', slogan:'Oranje',
+    primary:'#FF6600', accent:'#FFFFFF', flag:['#AE1C28','#FFFFFF','#21468B'],
+    squad:[
+      { num:1,  name:'Verbruggen',         pos:'GK',  grp:'GK'  },
+      { num:2,  name:'M. Flekken',         pos:'GK',  grp:'GK'  },
+      { num:3,  name:'J. Bijlow',          pos:'GK',  grp:'GK'  },
+      { num:4,  name:'Van Dijk',           pos:'CB',  grp:'DEF' },
+      { num:5,  name:'J. Timber',          pos:'CB',  grp:'DEF' },
+      { num:6,  name:'Aké',                pos:'CB',  grp:'DEF' },
+      { num:7,  name:'Van de Ven',         pos:'CB',  grp:'DEF' },
+      { num:8,  name:'De Ligt',            pos:'CB',  grp:'DEF' },
+      { num:9,  name:'De Vrij',            pos:'CB',  grp:'DEF' },
+      { num:10, name:'Van Hecke',          pos:'CB',  grp:'DEF' },
+      { num:11, name:'Dumfries',           pos:'RB',  grp:'DEF' },
+      { num:12, name:'Frimpong',           pos:'RB',  grp:'DEF' },
+      { num:13, name:'Geertruida',         pos:'RB',  grp:'DEF' },
+      { num:14, name:'J. Hato',            pos:'LB',  grp:'DEF' },
+      { num:15, name:'F. de Jong',         pos:'CDM', grp:'MID' },
+      { num:16, name:'Reijnders',          pos:'CM',  grp:'MID' },
+      { num:17, name:'Gravenberch',        pos:'CM',  grp:'MID' },
+      { num:18, name:'Schouten',           pos:'CDM', grp:'MID' },
+      { num:19, name:'Koopmeiners',        pos:'CAM', grp:'MID' },
+      { num:20, name:'Xavi Simons',        pos:'CAM', grp:'MID' },
+      { num:21, name:'Q. Timber',          pos:'CM',  grp:'MID' },
+      { num:22, name:'Gakpo',              pos:'LW',  grp:'FWD' },
+      { num:23, name:'D. Malen',           pos:'RW',  grp:'FWD' },
+      { num:24, name:'M. Depay',           pos:'ST',  grp:'FWD' },
+      { num:25, name:'Noa Lang',           pos:'LW',  grp:'FWD' },
+      { num:26, name:'Brobbey',            pos:'ST',  grp:'FWD' },
+    ]
+  },
+
+  // ─────────────────── ENGLAND ───────────────────
+  england: {
+    id:'england', name:'England', emoji:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', slogan:'Three Lions',
+    primary:'#CF081F', accent:'#FFFFFF', flag:['#FFFFFF','#CF081F','#FFFFFF'],
+    squad:[
+      { num:1,  name:'Pickford',           pos:'GK',  grp:'GK'  },
+      { num:2,  name:'D. Henderson',       pos:'GK',  grp:'GK'  },
+      { num:3,  name:'J. Trafford',        pos:'GK',  grp:'GK'  },
+      { num:4,  name:'Reece James',        pos:'RB',  grp:'DEF' },
+      { num:5,  name:'Ben White',          pos:'RB',  grp:'DEF' },
+      { num:6,  name:'John Stones',        pos:'CB',  grp:'DEF' },
+      { num:7,  name:'Marc Guéhi',         pos:'CB',  grp:'DEF' },
+      { num:8,  name:'Ezri Konsa',         pos:'CB',  grp:'DEF' },
+      { num:9,  name:'H. Maguire',         pos:'CB',  grp:'DEF' },
+      { num:10, name:'Lewis Hall',         pos:'LB',  grp:'DEF' },
+      { num:11, name:'Livramento',         pos:'RB',  grp:'DEF' },
+      { num:12, name:'Declan Rice',        pos:'CDM', grp:'MID' },
+      { num:13, name:'Bellingham',         pos:'CAM', grp:'MID' },
+      { num:14, name:'K. Mainoo',          pos:'CM',  grp:'MID' },
+      { num:15, name:'A. Wharton',         pos:'CDM', grp:'MID' },
+      { num:16, name:'Cole Palmer',        pos:'CAM', grp:'MID' },
+      { num:17, name:'M. Rogers',          pos:'CAM', grp:'MID' },
+      { num:18, name:'Gibbs-White',        pos:'CM',  grp:'MID' },
+      { num:19, name:'Harry Kane',         pos:'ST',  grp:'FWD' },
+      { num:20, name:'Bukayo Saka',        pos:'RW',  grp:'FWD' },
+      { num:21, name:'Phil Foden',         pos:'CAM', grp:'MID' },
+      { num:22, name:'A. Gordon',          pos:'LW',  grp:'FWD' },
+      { num:23, name:'Rashford',           pos:'LW',  grp:'FWD' },
+      { num:24, name:'J. Bowen',           pos:'RW',  grp:'FWD' },
+      { num:25, name:'Eze',                pos:'CAM', grp:'MID' },
+      { num:26, name:'D. Solanke',         pos:'ST',  grp:'FWD' },
+    ]
+  },
+};
+
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  FORMATIONS                                                       ║
+// ╚══════════════════════════════════════════════════════════════════╝
+const FORMATIONS = {
+  "4-3-3": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                     left:50, top:86 },
+    { id:"rb",  lbl:"RB",  compat:["RB","CB","LB"],           left:82, top:70 },
+    { id:"cb1", lbl:"CB",  compat:["CB","RB","LB"],           left:62, top:70 },
+    { id:"cb2", lbl:"CB",  compat:["CB","RB","LB"],           left:38, top:70 },
+    { id:"lb",  lbl:"LB",  compat:["LB","CB","RB"],           left:18, top:70 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],         left:68, top:48 },
+    { id:"cm",  lbl:"CM",  compat:["CM","CDM","CAM"],         left:50, top:45 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],         left:32, top:48 },
+    { id:"rw",  lbl:"RW",  compat:["RW","LW","ST","CAM"],     left:82, top:20 },
+    { id:"st",  lbl:"ST",  compat:["ST","RW","LW"],           left:50, top:15 },
+    { id:"lw",  lbl:"LW",  compat:["LW","RW","ST","CAM"],     left:18, top:20 },
+  ]},
+  "4-2-3-1": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rb",  lbl:"RB",  compat:["RB","CB","LB"],          left:82, top:71 },
+    { id:"cb1", lbl:"CB",  compat:["CB","RB","LB"],          left:62, top:71 },
+    { id:"cb2", lbl:"CB",  compat:["CB","RB","LB"],          left:38, top:71 },
+    { id:"lb",  lbl:"LB",  compat:["LB","CB","RB"],          left:18, top:71 },
+    { id:"cdm1",lbl:"CDM", compat:["CDM","CM","CB"],         left:62, top:57 },
+    { id:"cdm2",lbl:"CDM", compat:["CDM","CM","CB"],         left:38, top:57 },
+    { id:"ram", lbl:"RAM", compat:["CAM","RW","LW","CM"],    left:76, top:36 },
+    { id:"cam", lbl:"CAM", compat:["CAM","CM","CDM"],        left:50, top:33 },
+    { id:"lam", lbl:"LAM", compat:["CAM","LW","RW","CM"],    left:24, top:36 },
+    { id:"st",  lbl:"ST",  compat:["ST","RW","LW"],          left:50, top:15 },
+  ]},
+  "4-4-2": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rb",  lbl:"RB",  compat:["RB","CB","LB"],          left:82, top:71 },
+    { id:"cb1", lbl:"CB",  compat:["CB","RB","LB"],          left:62, top:71 },
+    { id:"cb2", lbl:"CB",  compat:["CB","RB","LB"],          left:38, top:71 },
+    { id:"lb",  lbl:"LB",  compat:["LB","CB","RB"],          left:18, top:71 },
+    { id:"rm",  lbl:"RM",  compat:["RW","RM","CM","LW"],     left:82, top:48 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:62, top:48 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:38, top:48 },
+    { id:"lm",  lbl:"LM",  compat:["LW","LM","CM","RW"],     left:18, top:48 },
+    { id:"st1", lbl:"ST",  compat:["ST","RW","LW"],          left:62, top:20 },
+    { id:"st2", lbl:"ST",  compat:["ST","RW","LW"],          left:38, top:20 },
+  ]},
+  "4-3-2-1": { slots:[
+    { id:"gk",   lbl:"GK",  compat:["GK"],                   left:50, top:86 },
+    { id:"rb",   lbl:"RB",  compat:["RB","CB","LB"],         left:82, top:72 },
+    { id:"cb1",  lbl:"CB",  compat:["CB","RB","LB"],         left:62, top:72 },
+    { id:"cb2",  lbl:"CB",  compat:["CB","RB","LB"],         left:38, top:72 },
+    { id:"lb",   lbl:"LB",  compat:["LB","CB","RB"],         left:18, top:72 },
+    { id:"rcm",  lbl:"CM",  compat:["CM","CDM","CAM"],       left:68, top:54 },
+    { id:"cm",   lbl:"CM",  compat:["CM","CDM","CAM"],       left:50, top:51 },
+    { id:"lcm",  lbl:"CM",  compat:["CM","CDM","CAM"],       left:32, top:54 },
+    { id:"rcam", lbl:"CAM", compat:["CAM","CM","RW","LW"],   left:65, top:35 },
+    { id:"lcam", lbl:"CAM", compat:["CAM","CM","LW","RW"],   left:35, top:35 },
+    { id:"st",   lbl:"ST",  compat:["ST","RW","LW"],         left:50, top:15 },
+  ]},
+  "4-1-4-1": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rb",  lbl:"RB",  compat:["RB","CB","LB"],          left:82, top:72 },
+    { id:"cb1", lbl:"CB",  compat:["CB","RB","LB"],          left:62, top:72 },
+    { id:"cb2", lbl:"CB",  compat:["CB","RB","LB"],          left:38, top:72 },
+    { id:"lb",  lbl:"LB",  compat:["LB","CB","RB"],          left:18, top:72 },
+    { id:"cdm", lbl:"CDM", compat:["CDM","CM","CB"],         left:50, top:58 },
+    { id:"rm",  lbl:"RM",  compat:["RW","RM","CM","CAM"],    left:84, top:42 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:65, top:42 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:35, top:42 },
+    { id:"lm",  lbl:"LM",  compat:["LW","LM","CM","CAM"],   left:16, top:42 },
+    { id:"st",  lbl:"ST",  compat:["ST","RW","LW"],          left:50, top:15 },
+  ]},
+  "4-5-1": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rb",  lbl:"RB",  compat:["RB","CB","LB"],          left:82, top:72 },
+    { id:"cb1", lbl:"CB",  compat:["CB","RB","LB"],          left:62, top:72 },
+    { id:"cb2", lbl:"CB",  compat:["CB","RB","LB"],          left:38, top:72 },
+    { id:"lb",  lbl:"LB",  compat:["LB","CB","RB"],          left:18, top:72 },
+    { id:"rm",  lbl:"RM",  compat:["RW","RM","CM","CAM"],    left:86, top:46 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:68, top:50 },
+    { id:"cm",  lbl:"CM",  compat:["CM","CDM","CAM"],        left:50, top:48 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:32, top:50 },
+    { id:"lm",  lbl:"LM",  compat:["LW","LM","CM","CAM"],   left:14, top:46 },
+    { id:"st",  lbl:"ST",  compat:["ST","RW","LW"],          left:50, top:16 },
+  ]},
+  "3-5-2": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rcb", lbl:"CB",  compat:["CB","RB","LB"],          left:72, top:72 },
+    { id:"cb",  lbl:"CB",  compat:["CB","RB","LB"],          left:50, top:70 },
+    { id:"lcb", lbl:"CB",  compat:["CB","RB","LB"],          left:28, top:72 },
+    { id:"rwb", lbl:"RWB", compat:["RB","LB","RW","LW"],     left:88, top:51 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:68, top:47 },
+    { id:"cm",  lbl:"CM",  compat:["CM","CDM","CAM"],        left:50, top:44 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:32, top:47 },
+    { id:"lwb", lbl:"LWB", compat:["LB","RB","LW","RW"],     left:12, top:51 },
+    { id:"st1", lbl:"ST",  compat:["ST","RW","LW"],          left:63, top:20 },
+    { id:"st2", lbl:"ST",  compat:["ST","RW","LW"],          left:37, top:20 },
+  ]},
+  "3-4-3": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rcb", lbl:"CB",  compat:["CB","RB","LB"],          left:72, top:73 },
+    { id:"cb",  lbl:"CB",  compat:["CB","RB","LB"],          left:50, top:71 },
+    { id:"lcb", lbl:"CB",  compat:["CB","RB","LB"],          left:28, top:73 },
+    { id:"rwb", lbl:"RWB", compat:["RB","LB","RW","LW"],     left:85, top:52 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:63, top:49 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:37, top:49 },
+    { id:"lwb", lbl:"LWB", compat:["LB","RB","LW","RW"],     left:15, top:52 },
+    { id:"rw",  lbl:"RW",  compat:["RW","LW","CAM","ST"],    left:80, top:20 },
+    { id:"st",  lbl:"ST",  compat:["ST","RW","LW"],          left:50, top:14 },
+    { id:"lw",  lbl:"LW",  compat:["LW","RW","CAM","ST"],    left:20, top:20 },
+  ]},
+  "3-4-2-1": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rcb", lbl:"CB",  compat:["CB","RB","LB"],          left:72, top:73 },
+    { id:"cb",  lbl:"CB",  compat:["CB","RB","LB"],          left:50, top:71 },
+    { id:"lcb", lbl:"CB",  compat:["CB","RB","LB"],          left:28, top:73 },
+    { id:"rwb", lbl:"RWB", compat:["RB","LB","RW","LW"],     left:85, top:54 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:64, top:50 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:36, top:50 },
+    { id:"lwb", lbl:"LWB", compat:["LB","RB","LW","RW"],     left:15, top:54 },
+    { id:"ram", lbl:"CAM", compat:["CAM","RW","LW","CM"],    left:65, top:32 },
+    { id:"lam", lbl:"CAM", compat:["CAM","LW","RW","CM"],    left:35, top:32 },
+    { id:"st",  lbl:"ST",  compat:["ST","RW","LW"],          left:50, top:14 },
+  ]},
+  "5-3-2": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rb",  lbl:"RB",  compat:["RB","CB"],               left:88, top:68 },
+    { id:"rcb", lbl:"CB",  compat:["CB","RB","LB"],          left:70, top:74 },
+    { id:"cb",  lbl:"CB",  compat:["CB","RB","LB"],          left:50, top:76 },
+    { id:"lcb", lbl:"CB",  compat:["CB","RB","LB"],          left:30, top:74 },
+    { id:"lb",  lbl:"LB",  compat:["LB","CB"],               left:12, top:68 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:68, top:48 },
+    { id:"cm",  lbl:"CM",  compat:["CM","CDM","CAM"],        left:50, top:45 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:32, top:48 },
+    { id:"st1", lbl:"ST",  compat:["ST","RW","LW"],          left:63, top:18 },
+    { id:"st2", lbl:"ST",  compat:["ST","RW","LW"],          left:37, top:18 },
+  ]},
+  "5-4-1": { slots:[
+    { id:"gk",  lbl:"GK",  compat:["GK"],                    left:50, top:86 },
+    { id:"rb",  lbl:"RB",  compat:["RB","CB"],               left:88, top:68 },
+    { id:"rcb", lbl:"CB",  compat:["CB","RB","LB"],          left:70, top:74 },
+    { id:"cb",  lbl:"CB",  compat:["CB","RB","LB"],          left:50, top:76 },
+    { id:"lcb", lbl:"CB",  compat:["CB","RB","LB"],          left:30, top:74 },
+    { id:"lb",  lbl:"LB",  compat:["LB","CB"],               left:12, top:68 },
+    { id:"rm",  lbl:"RM",  compat:["RW","RM","CM","CAM"],    left:82, top:48 },
+    { id:"rcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:62, top:48 },
+    { id:"lcm", lbl:"CM",  compat:["CM","CDM","CAM"],        left:38, top:48 },
+    { id:"lm",  lbl:"LM",  compat:["LW","LM","CM","CAM"],   left:18, top:48 },
+    { id:"st",  lbl:"ST",  compat:["ST","RW","LW"],          left:50, top:16 },
+  ]},
+};
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let activeTeamId     = null;
+let currentFormation = null;
+let slotToPlayer     = {};   // slotId  → playerNum
+let playerToSlot     = {};   // playerNum → slotId
+
+// Modal state
+let modalMode      = null;  // 'pick-for-slot' | 'move-player' | 'pick-for-player'
+let modalSlotId    = null;
+let modalPlayerNum = null;
+
+// ══════════════════════════════════════════
+//  PLAYER DISPLAY NAME
+//  Rules: single-word → use as-is
+//         two-word → use full name (already stored that way)
+//         clash avoidance handled by naming in data
+// ══════════════════════════════════════════
+function displayName(player) {
+  return player.name;
+}
+
+// ══════════════════════════════════════════
+//  TEAM SLIDER
+// ══════════════════════════════════════════
+function buildTeamSlider() {
+  const slider = document.getElementById('teamSlider');
+  Object.values(TEAMS).forEach(team => {
+    const card = document.createElement('div');
+    card.className = 'team-card';
+    card.id = `tc-${team.id}`;
+    card.style.setProperty('--tc-primary', team.primary);
+    const flagHtml = team.flag.map(c => `<span style="background:${c}; flex:1;"></span>`).join('');
+    card.innerHTML = `
+      <div class="tc-flag">${flagHtml}</div>
+      <div class="tc-emoji">${team.emoji}</div>
+      <div class="tc-name">${team.name.toUpperCase()}</div>
+      <div class="tc-badge">${team.slogan}</div>`;
+    card.onclick = () => selectTeam(team.id);
+    slider.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════
+//  SELECT TEAM
+// ══════════════════════════════════════════
+function selectTeam(teamId) {
+  if (activeTeamId === teamId) return;
+  activeTeamId = teamId;
+  currentFormation = null;
+  slotToPlayer = {}; playerToSlot = {};
+
+  const team = TEAMS[teamId];
+  document.documentElement.style.setProperty('--t-primary', team.primary);
+  document.documentElement.style.setProperty('--t-accent',  team.accent);
+  document.documentElement.style.setProperty('--t-primary-faint', hexToRgba(team.primary, 0.07));
+  document.documentElement.style.setProperty('--t-accent-faint',  hexToRgba(team.accent,  0.04));
+
+  updateHeader(team);
+
+  document.getElementById('titleTeam').textContent = team.name.toUpperCase();
+  document.querySelectorAll('.team-card').forEach(c => c.classList.remove('active'));
+  document.getElementById(`tc-${teamId}`).classList.add('active');
+  document.getElementById('pitchTeamTag').textContent = team.name.toUpperCase();
+  document.getElementById('completeMsg').textContent = `⚽ YOUR XI IS COMPLETE — ${team.slogan.toUpperCase()}!`;
+  document.getElementById('teamOverlay').style.display = 'none';
+  document.getElementById('fmtOverlay').style.display  = 'flex';
+  document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('fmtDisplay').textContent = '—';
+  document.getElementById('completeBanner').classList.remove('show');
+
+  buildTable(team.squad);
+  renderPitch();
+  updateCounters();
+  toast(`${team.emoji} ${team.name} squad loaded!`, 'ok');
+}
+
+// ══════════════════════════════════════════
+//  SELECT FORMATION
+// ══════════════════════════════════════════
+function selectFormation(name) {
+  if (!activeTeamId) { toast('Pick a team first!'); return; }
+  const isSwitch = currentFormation && currentFormation !== name;
+  if (isSwitch && Object.keys(playerToSlot).length > 0) _clearXI(false);
+  currentFormation = name;
+  slotToPlayer = {}; playerToSlot = {};
+  document.querySelectorAll('.fmt-btn').forEach(b =>
+    b.classList.toggle('active', b.textContent.trim() === name)
+  );
+  document.getElementById('fmtDisplay').textContent = name;
+  document.getElementById('fmtOverlay').style.display = 'none';
+  if (isSwitch) _clearInputs();
+  renderPitch();
+  updateCounters();
+  toast(`Formation ${name} selected!`, 'ok');
+}
+
+// ══════════════════════════════════════════
+//  PITCH RENDER
+// ══════════════════════════════════════════
+function renderPitch() {
+  const layer = document.getElementById('playersLayer');
+  layer.innerHTML = '';
+  if (!currentFormation) return;
+
+  FORMATIONS[currentFormation].slots.forEach(slot => {
+    const pNum   = slotToPlayer[slot.id];
+    const player = pNum !== undefined
+      ? TEAMS[activeTeamId].squad.find(p => p.num === pNum)
+      : null;
+
+    const dot = document.createElement('div');
+    dot.className = 'p-dot';
+    dot.style.left = slot.left + '%';
+    dot.style.top  = slot.top  + '%';
+
+    if (player) {
+      dot.classList.add('filled-slot');
+      dot.title = `${player.name} — click to move`;
+      dot.innerHTML = `<div class="p-circle">${player.num}</div><div class="p-name">${displayName(player)}</div>`;
+      dot.onclick = () => openMovePlayerModal(player.num, slot.id);
+    } else {
+      dot.classList.add('empty-slot');
+      dot.title = `${slot.lbl} — click to pick player`;
+      dot.innerHTML = `<div class="p-circle">${slot.lbl}</div><div class="p-slot-lbl">${slot.lbl}</div>`;
+      dot.onclick = () => openPickForSlotModal(slot.id);
+    }
+    layer.appendChild(dot);
+  });
+}
+
+// ══════════════════════════════════════════
+//  SMART SLOT FINDER (for table clicks)
+// ══════════════════════════════════════════
+function findBestSlot(player) {
+  const slots = FORMATIONS[currentFormation].slots;
+  const exact  = slots.find(s => !slotToPlayer[s.id] && s.compat[0] === player.pos);
+  if (exact) return exact;
+  const compat = slots.find(s => !slotToPlayer[s.id] && s.compat.includes(player.pos));
+  if (compat) return compat;
+  const grpMap = { GK:['GK'], DEF:['RB','CB','LB','RWB','LWB'], MID:['CDM','CM','CAM','RM','LM'], FWD:['ST','RW','LW'] };
+  const acceptable = grpMap[player.grp] || [];
+  const grpSlot = slots.find(s => !slotToPlayer[s.id] && acceptable.includes(s.lbl));
+  if (grpSlot) return grpSlot;
+  return slots.find(s => !slotToPlayer[s.id]) || null;
+}
+
+// ══════════════════════════════════════════
+//  ADD / REMOVE PLAYER
+// ══════════════════════════════════════════
+function addPlayerToSlot(playerNum, slotId) {
+  slotToPlayer[slotId] = playerNum;
+  playerToSlot[playerNum] = slotId;
+  renderPitch();
+  syncTableRow(playerNum, true);
+  updateCounters();
+}
+
+function removePlayer(playerNum) {
+  const sid = playerToSlot[playerNum];
+  if (sid) { delete slotToPlayer[sid]; delete playerToSlot[playerNum]; }
+  renderPitch();
+  syncTableRow(playerNum, false);
+  updateCounters();
+}
+
+// ══════════════════════════════════════════
+//  TABLE ROW CLICK  (add or remove)
+// ══════════════════════════════════════════
+function handleRowClick(playerNum) {
+  if (!currentFormation) { toast('Select a formation first!'); return; }
+  const team   = TEAMS[activeTeamId];
+  const player = team.squad.find(p => p.num === playerNum);
+
+  if (playerToSlot[playerNum]) {
+    // Already in XI → remove
+    removePlayer(playerNum);
+    toast(`${player.name} removed.`, 'ok');
+    return;
+  }
+
+  if (Object.keys(playerToSlot).length >= 11) { toast('Your XI is already full!'); return; }
+  if (player.grp === 'GK') {
+    const hasGK = team.squad.some(p => p.grp === 'GK' && playerToSlot[p.num]);
+    if (hasGK) { toast('A goalkeeper is already in your XI!'); return; }
+  }
+
+  const slot = findBestSlot(player);
+  if (!slot) { toast('No available slot for this player.'); return; }
+  addPlayerToSlot(playerNum, slot.id);
+  toast(`${player.name} added!`, 'ok');
+}
+
+// ══════════════════════════════════════════
+//  SLOT PICKER MODAL — OPEN (click empty slot on pitch)
+// ══════════════════════════════════════════
+function openPickForSlotModal(slotId) {
+  if (!activeTeamId) return;
+  modalMode   = 'pick-for-slot';
+  modalSlotId = slotId;
+
+  const slot  = FORMATIONS[currentFormation].slots.find(s => s.id === slotId);
+  const team  = TEAMS[activeTeamId];
+
+  // Filter eligible players: must be compatible with slot AND not already placed
+  const eligible = team.squad.filter(p => {
+    if (playerToSlot[p.num]) return false; // already placed
+    return slot.compat.includes(p.pos) || isGroupCompat(p.grp, slot.lbl);
+  });
+
+  document.getElementById('slotModalTitle').textContent = `PICK FOR ${slot.lbl}`;
+  document.getElementById('slotModalSub').textContent   =
+    `Select a player eligible for the ${slot.lbl} position. Tap a name to place them.`;
+
+  // Build player list (not slot grid, but player buttons)
+  const grid = document.getElementById('slotModalContent');
+  grid.style.gridTemplateColumns = 'repeat(2,1fr)';
+  if (eligible.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);font-size:12px;text-align:center;padding:16px 0;">No eligible players available for this slot.</div>';
+  } else {
+    grid.innerHTML = eligible.map(p => `
+      <button class="slot-btn" onclick="confirmPickForSlot(${p.num})">
+        <span style="font-family:var(--font-h);font-size:15px;letter-spacing:1px;">${displayName(p)}</span>
+        <span class="slot-occupant">#${p.num} · ${p.pos}</span>
+      </button>`).join('');
+  }
+
+  document.getElementById('slotModalBackdrop').classList.add('open');
+}
+
+function isGroupCompat(grp, slotLbl) {
+  const map = { GK:['GK'], DEF:['RB','CB','LB','RWB','LWB'], MID:['CDM','CM','CAM','RM','LM','RAM','LAM'], FWD:['ST','RW','LW'] };
+  return (map[grp] || []).includes(slotLbl);
+}
+
+function confirmPickForSlot(playerNum) {
+  const targetSlot = modalSlotId; // capture before closeSlotModal nulls it
+  closeSlotModal();
+  const player = TEAMS[activeTeamId].squad.find(p => p.num === playerNum);
+  if (player.grp === 'GK') {
+    const hasGK = TEAMS[activeTeamId].squad.some(p => p.grp === 'GK' && playerToSlot[p.num]);
+    if (hasGK) { toast('A goalkeeper is already in your XI!'); return; }
+  }
+  addPlayerToSlot(playerNum, targetSlot);
+  toast(`${player.name} placed!`, 'ok');
+}
+
+// ══════════════════════════════════════════
+//  SLOT PICKER MODAL — OPEN (click filled player to move)
+// ══════════════════════════════════════════
+function openMovePlayerModal(playerNum, fromSlotId) {
+  modalMode      = 'move-player';
+  modalPlayerNum = playerNum;
+  modalSlotId    = fromSlotId;
+
+  const player = TEAMS[activeTeamId].squad.find(p => p.num === playerNum);
+  const slots  = FORMATIONS[currentFormation].slots;
+
+  document.getElementById('slotModalTitle').textContent = displayName(player).toUpperCase();
+  document.getElementById('slotModalSub').textContent   =
+    `Current: ${fromSlotId.toUpperCase()}  ·  Select a slot to move ${player.name} to.`;
+
+  // Only show slots compatible with this player's position group, plus their current slot
+  const compatSlots = slots.filter(slot => {
+    if (slot.id === fromSlotId) return true; // always show current
+    return slot.compat.includes(player.pos) || isGroupCompat(player.grp, slot.lbl);
+  });
+
+  const grid = document.getElementById('slotModalContent');
+  grid.style.gridTemplateColumns = 'repeat(3,1fr)';
+  grid.innerHTML = compatSlots.map(slot => {
+    const isCurrent  = slot.id === fromSlotId;
+    const isOccupied = slotToPlayer[slot.id] !== undefined && !isCurrent;
+    const occupant   = isOccupied ? TEAMS[activeTeamId].squad.find(p => p.num === slotToPlayer[slot.id]) : null;
+    let cls = 'slot-btn';
+    if (isCurrent)  cls += ' current-slot';
+    if (isOccupied) cls += ' occupied';
+    return `<button class="${cls}" ${isOccupied ? 'disabled' : ''} onclick="confirmMoveToSlot('${slot.id}')">
+      ${slot.lbl}
+      ${occupant ? `<span class="slot-occupant">${displayName(occupant)}</span>` : ''}
+    </button>`;
+  }).join('');
+
+  document.getElementById('slotModalBackdrop').classList.add('open');
+}
+
+function confirmMoveToSlot(targetSlotId) {
+  const fromSlot  = modalSlotId;    // capture before closeSlotModal nulls them
+  const movingNum = modalPlayerNum;
+  if (targetSlotId === fromSlot) { closeSlotModal(); return; }
+  closeSlotModal();
+  delete slotToPlayer[fromSlot];
+  slotToPlayer[targetSlotId] = movingNum;
+  playerToSlot[movingNum] = targetSlotId;
+  renderPitch();
+  toast('Player moved!', 'ok');
+}
+
+// ══════════════════════════════════════════
+//  MODAL CLOSE
+// ══════════════════════════════════════════
+function closeSlotModal() {
+  document.getElementById('slotModalBackdrop').classList.remove('open');
+  modalMode = null; modalSlotId = null; modalPlayerNum = null;
+}
+function closeSlotModalOnBackdrop(e) {
+  if (e.target === document.getElementById('slotModalBackdrop')) closeSlotModal();
+}
+
+// ══════════════════════════════════════════
+//  BUILD TABLE
+// ══════════════════════════════════════════
+function buildTable(squadData) {
+  const grpColor = { GK:'pos-GK', DEF:'pos-DEF', MID:'pos-MID', FWD:'pos-FWD' };
+  const tbody = document.getElementById('squadBody');
+  if (!squadData || squadData.length === 0) {
+    tbody.innerHTML = '<tr class="empty-squad-row"><td colspan="4">← Select a team to load squad</td></tr>';
+    return;
+  }
+  tbody.innerHTML = squadData.map(p => `
+    <tr id="row-${p.num}" onclick="handleRowClick(${p.num})" title="Click to add/remove">
+      <td class="td-num">${p.num}</td>
+      <td class="td-name" id="name-${p.num}">${p.name}</td>
+      <td><span class="pos-badge ${grpColor[p.grp]}">${p.pos}</span></td>
+      <td><div class="row-status" id="status-${p.num}"></div></td>
+    </tr>`).join('');
+}
+
+function syncTableRow(playerNum, inXI) {
+  const row    = document.getElementById(`row-${playerNum}`);
+  const nameEl = document.getElementById(`name-${playerNum}`);
+  const status = document.getElementById(`status-${playerNum}`);
+  if (!row) return;
+  row.classList.toggle('selected-row', inXI);
+  nameEl.classList.toggle('in-xi', inXI);
+  status.className = 'row-status' + (inXI ? ' in-xi-status' : '');
+  status.textContent = inXI ? '✓' : '';
+}
+
+// ══════════════════════════════════════════
+//  COUNTERS
+// ══════════════════════════════════════════
+function updateCounters() {
+  const c = Object.keys(playerToSlot).length;
+  document.getElementById('selCount').textContent = c;
+  document.getElementById('xiCount').textContent  = c;
+  document.getElementById('completeBanner').classList.toggle('show', c === 11);
+}
+
+// ══════════════════════════════════════════
+//  RESET
+// ══════════════════════════════════════════
+function _clearInputs() {
+  if (!activeTeamId) return;
+  TEAMS[activeTeamId].squad.forEach(p => syncTableRow(p.num, false));
+}
+function _clearXI(doRender = true) {
+  slotToPlayer = {}; playerToSlot = {};
+  _clearInputs();
+  if (doRender) { renderPitch(); updateCounters(); }
+}
+function resetAll() {
+  _clearXI();
+  currentFormation = null;
+  document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('fmtDisplay').textContent = '—';
+  if (activeTeamId) document.getElementById('fmtOverlay').style.display = 'flex';
+  document.getElementById('completeBanner').classList.remove('show');
+  document.getElementById('playersLayer').innerHTML = '';
+  updateCounters();
+  toast('XI reset. Pick a formation to start again.', 'ok');
+}
+
+// ══════════════════════════════════════════
+//  RULES TOGGLE
+// ══════════════════════════════════════════
+function toggleRules() {
+  document.getElementById('rulesBody').classList.toggle('open');
+  document.getElementById('rulesBtn').classList.toggle('open');
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function toast(msg, type = 'err') {
+  const el = document.getElementById('toast');
+  document.getElementById('tMsg').textContent = msg;
+  document.getElementById('tIco').textContent = type === 'err' ? '⚠️' : '✅';
+  el.className = `show t-${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+// ══════════════════════════════════════════
+//  HEADER THEME UPDATE
+// ══════════════════════════════════════════
+function updateHeader(team) {
+  const f = team.flag; // array of 2 or 3 colour strings
+
+  // ── Flag stripe bar ──────────────────────────────────────────────
+  const bars = ['hfb1','hfb2','hfb3'];
+  // Distribute flag colours across 3 stripes (handles 2-colour flags too)
+  const stripeColors = f.length === 2
+    ? [f[0], f[1], f[0]]
+    : [f[0], f[1], f[2]];
+  bars.forEach((id, i) => {
+    document.getElementById(id).style.background = stripeColors[i];
+  });
+
+  // ── Header body gradient ─────────────────────────────────────────
+  const root = document.documentElement;
+  root.style.setProperty('--hdr-c1', hexToRgba(f[0], 0.18));
+  root.style.setProperty('--hdr-c2', hexToRgba(f.length > 2 ? f[1] : f[0], 0.06));
+  root.style.setProperty('--hdr-c3', hexToRgba(f[f.length - 1], 0.14));
+  root.style.setProperty('--hdr-glow', hexToRgba(team.primary, 0.22));
+
+  // ── Country name colour (use accent or primary depending on brightness) ──
+  const nameColor = team.accent === '#FFFFFF' ? team.primary : team.accent;
+  root.style.setProperty('--hdr-name-color', nameColor);
+
+  // ── Accent line uses first + last flag colour ─────────────────────
+  root.style.setProperty('--hdr-line-c1', hexToRgba(f[0], 0.7));
+  root.style.setProperty('--hdr-line-c2', hexToRgba(f[f.length - 1], 0.7));
+
+  // ── Country name & slogan ─────────────────────────────────────────
+  const countryEl = document.getElementById('headerCountry');
+  const sloganEl  = document.getElementById('headerSlogan');
+  countryEl.textContent = team.name.toUpperCase();
+  countryEl.classList.add('has-team');
+  sloganEl.textContent  = team.slogan;
+  sloganEl.style.color  = nameColor;
+
+  // ── Flag emoji (both sides of title) ─────────────────────────────
+  ['headerFlagEmoji','headerFlagEmoji2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.textContent = team.emoji;
+    el.classList.remove('visible');
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
+  });
+
+  // Trigger slogan animation
+  sloganEl.classList.remove('visible');
+  requestAnimationFrame(() => requestAnimationFrame(() => sloganEl.classList.add('visible')));
+}
+
+// ══════════════════════════════════════════
+//  UTILITY
+// ══════════════════════════════════════════
+function hexToRgba(hex, alpha) {
+  const clean = hex.replace('#','');
+  const full  = clean.length === 3 ? clean.split('').map(c=>c+c).join('') : clean;
+  const r = parseInt(full.slice(0,2),16);
+  const g = parseInt(full.slice(2,4),16);
+  const b = parseInt(full.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// ══════════════════════════════════════════
+//  SAVE LINEUP AS JPG  — pure Canvas 2D, no html2canvas
+// ══════════════════════════════════════════
+function saveLineupJPG() {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="save-ico">⏳</span> Generating…';
+
+  // Wrap in rAF so the button UI updates before we block
+  requestAnimationFrame(() => {
+    try {
+      _drawAndDownload();
+    } catch(err) {
+      console.error(err);
+      toast('Export failed. Try again.', 'err');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="save-ico">📸</span> Save Lineup as JPG';
+    }
+  });
+}
+
+function _drawAndDownload() {
+  const team = TEAMS[activeTeamId];
+  const f    = team.flag;
+  const stripes = f.length === 2 ? [f[0], f[1], f[0]] : f;
+
+  const slots    = FORMATIONS[currentFormation].slots;
+  const xi       = slots
+    .filter(s => slotToPlayer[s.id] !== undefined)
+    .map(s => ({ slot: s, player: team.squad.find(p => p.num === slotToPlayer[s.id]) }))
+    .filter(x => x.player);
+
+  // ── Canvas dimensions ─────────────────────────────────────────────
+  // Sized to match the dashboard's visual density exactly:
+  //   - Total width 1100px
+  //   - Pitch takes ~42% of body width (same ratio as 50/50 grid minus padding)
+  //   - Pitch aspect ratio 1:1.25 (matches CSS padding-bottom:125%)
+  //   - DOT_R and fonts derived from dashboard CSS (.p-circle=33px, .p-name=8.5px)
+  const W = 1100, HEADER_H = 110, FOOTER_H = 32;
+  const PITCH_W = 420;                         // pitch width in logical px
+  const PITCH_H = Math.round(PITCH_W * 1.25);  // 525px — exact 1:1.25 ratio
+  const PITCH_X = 18, PITCH_Y = HEADER_H + 10;
+  const BODY_H  = PITCH_H + 20;                // body height wraps the pitch
+  const H = HEADER_H + BODY_H + FOOTER_H;
+  const LIST_X  = PITCH_X + PITCH_W + 18;
+  const LIST_W  = W - LIST_X - 14;
+  const STRIPE_H = 7;
+
+  const canvas = document.createElement('canvas');
+  canvas.width  = W * 2;   // 2× for retina sharpness
+  canvas.height = H * 2;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2, 2);          // draw at logical pixels, output at 2×
+
+  // ── Helper: rounded rect ────────────────────────────────────────
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  // ── Background ──────────────────────────────────────────────────
+  ctx.fillStyle = '#080b0f';
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Flag stripe bar (top) ────────────────────────────────────────
+  const sw = W / stripes.length;
+  stripes.forEach((c, i) => {
+    ctx.fillStyle = c;
+    ctx.fillRect(i * sw, 0, sw, STRIPE_H);
+  });
+
+  // ── Header background gradient ───────────────────────────────────
+  const hg = ctx.createLinearGradient(0, STRIPE_H, W, HEADER_H);
+  hg.addColorStop(0,   hexToRgba(f[0], 0.30));
+  hg.addColorStop(0.5, hexToRgba(f[Math.floor(f.length/2)], 0.10));
+  hg.addColorStop(1,   hexToRgba(f[f.length-1], 0.25));
+  ctx.fillStyle = hg;
+  ctx.fillRect(0, STRIPE_H, W, HEADER_H - STRIPE_H);
+
+  // ── Header: country code letters ─────────────────────────────────
+  const code = team.name.slice(0,2).toUpperCase();
+  ctx.font = 'bold 40px Bebas Neue, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.fillText(code, 24, STRIPE_H + 62);
+
+  // ── Header: eyebrow ──────────────────────────────────────────────
+  ctx.font = '600 9px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.letterSpacing = '3px';
+  ctx.fillText('FIFA  WORLD  CUP  2026', 80, STRIPE_H + 22);
+
+  // ── Header: team name ────────────────────────────────────────────
+  ctx.font = 'bold 36px Bebas Neue, sans-serif';
+  ctx.fillStyle = '#f0f2f5';
+  const nameLabel = team.name.toUpperCase() + ' ';
+  ctx.fillText(nameLabel, 80, STRIPE_H + 60);
+
+  // "BEST XI" in accent colour
+  const nameW = ctx.measureText(nameLabel).width;
+  const accentCol = team.accent === '#FFFFFF' ? team.primary : team.accent;
+  ctx.fillStyle = accentCol;
+  ctx.fillText('BEST XI', 80 + nameW, STRIPE_H + 60);
+
+  // ── Header: slogan ───────────────────────────────────────────────
+  ctx.font = '600 11px Outfit, sans-serif';
+  ctx.fillStyle = accentCol;
+  ctx.fillText(team.slogan, 80, STRIPE_H + 80);
+
+  // ── Header: formation badge ──────────────────────────────────────
+  const badgeW = 88, badgeH = 36, badgeX = W - badgeW - 20, badgeY = STRIPE_H + 18;
+  roundRect(badgeX, badgeY, badgeW, badgeH, 6);
+  ctx.fillStyle = accentCol;
+  ctx.fill();
+  ctx.font = 'bold 22px Bebas Neue, sans-serif';
+  ctx.fillStyle = team.accent === '#FFFFFF' ? team.primary : '#000';
+  ctx.textAlign = 'center';
+  ctx.fillText(currentFormation, badgeX + badgeW/2, badgeY + 25);
+  ctx.textAlign = 'left';
+  ctx.font = '600 8px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.textAlign = 'center';
+  ctx.fillText('FORMATION', badgeX + badgeW/2, badgeY + badgeH + 12);
+  ctx.textAlign = 'left';
+
+  // ── Divider line under header ────────────────────────────────────
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, HEADER_H); ctx.lineTo(W, HEADER_H); ctx.stroke();
+
+  // ════════════════════════════════════════
+  //  PITCH
+  // ════════════════════════════════════════
+  const px = PITCH_X, py = PITCH_Y, pw = PITCH_W, ph = PITCH_H;
+
+  // Pitch background
+  roundRect(px, py, pw, ph, 8);
+  ctx.fillStyle = '#1a4727';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Grass stripes
+  ctx.save();
+  roundRect(px, py, pw, ph, 8);
+  ctx.clip();
+  const stripeH = ph / 10;
+  for (let i = 0; i < 10; i++) {
+    if (i % 2 === 0) {
+      ctx.fillStyle = 'rgba(30,84,48,0.55)';
+      ctx.fillRect(px, py + i * stripeH, pw, stripeH);
+    }
+  }
+
+  // ── Pitch markings ───────────────────────────────────────────────
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+  ctx.lineWidth = 1;
+
+  // Pitch: map SVG 100×125 space to canvas pw×ph
+  function sx(pct) { return px + (pct / 100) * pw; }
+  function sy(pct) { return py + (pct / 100) * ph; }
+
+  // Outer boundary (inset 3% each side in SVG space → ~3/100*pw)
+  const bx1 = sx(3), by1 = sy(1.6), bx2 = sx(97), by2 = sy(98.4);
+  ctx.strokeRect(bx1, by1, bx2 - bx1, by2 - by1);
+
+  // Halfway line
+  const midY = sy(50);
+  ctx.beginPath(); ctx.moveTo(bx1, midY); ctx.lineTo(bx2, midY); ctx.stroke();
+
+  // Centre circle
+  const cxP = sx(50), cyP = midY, cR = (11/100) * pw;
+  ctx.beginPath(); ctx.arc(cxP, cyP, cR, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cxP, cyP, 2, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.fill();
+
+  // Top penalty box (22–78 wide, 2–17.6 tall in SVG %)
+  ctx.strokeRect(sx(22), sy(1.6), sx(78)-sx(22), sy(17.6)-sy(1.6));
+  // Top 6-yard box
+  ctx.strokeRect(sx(35), sy(1.6), sx(65)-sx(35), sy(8.8)-sy(1.6));
+  // Top penalty spot
+  ctx.beginPath(); ctx.arc(sx(50), sy(11.2), 1.5, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.fill();
+  // Top D-arc
+  ctx.beginPath();
+  ctx.arc(sx(50), sy(17.6), (13/100)*pw, Math.PI, 0);
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.stroke();
+
+  // Bottom penalty box
+  ctx.strokeRect(sx(22), sy(82.4), sx(78)-sx(22), sy(98.4)-sy(82.4));
+  // Bottom 6-yard box
+  ctx.strokeRect(sx(35), sy(91.2), sx(65)-sx(35), sy(98.4)-sy(91.2));
+  // Bottom penalty spot
+  ctx.beginPath(); ctx.arc(sx(50), sy(88.8), 1.5, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.fill();
+  // Bottom D-arc
+  ctx.beginPath();
+  ctx.arc(sx(50), sy(82.4), (13/100)*pw, 0, Math.PI);
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.stroke();
+
+  ctx.restore(); // end pitch clip
+
+  // ════════════════════════════════════════
+  //  PLAYER DOTS ON PITCH
+  // ════════════════════════════════════════
+  // DOT_R: dashboard circle is 33px dia on ~572px pitch → 2.9% of pitch width
+  const DOT_R = Math.round(PITCH_W * 0.029);  // ≈ 12px at PITCH_W=420
+  const LH = 11, LABEL_PAD = 8; // label height and horizontal padding
+  ctx.font = 'bold 7px Outfit, sans-serif';
+
+  // ── Pass 1: compute natural dot + label positions ─────────────────
+  const dotData = xi.map(({ slot, player: p }) => {
+    const dotX   = px + (slot.left / 100) * pw;
+    const dotY   = py + (slot.top  / 100) * ph;
+    const txt    = p.name.split(' ')[0].toUpperCase(); // first name only to avoid overlap
+    const tw     = ctx.measureText(txt).width;
+    const lw     = tw + LABEL_PAD;
+    return { dotX, dotY, txt, lw, lh: LH,
+             lx: dotX - lw/2,
+             ly: dotY + DOT_R + 3,   // natural position: just below circle
+             p };
+  });
+
+  // ── Pass 2: resolve label collisions ─────────────────────────────
+  // Two labels collide when their rects overlap on BOTH axes.
+  // Strategy: for each overlapping pair, push one above its dot and one below.
+  // Run multiple passes until stable (max 6 iterations).
+  function labelsOverlap(a, b) {
+    return !(a.lx + a.lw + 2 < b.lx ||
+             b.lx + b.lw + 2 < a.lx ||
+             a.ly + a.lh + 1 < b.ly ||
+             b.ly + b.lh + 1 < a.ly);
+  }
+
+  for (let pass = 0; pass < 6; pass++) {
+    let anyFixed = false;
+    for (let i = 0; i < dotData.length; i++) {
+      for (let j = i + 1; j < dotData.length; j++) {
+        const a = dotData[i], b = dotData[j];
+        if (!labelsOverlap(a, b)) continue;
+        anyFixed = true;
+
+        // Decide which label goes above vs below based on vertical proximity
+        // The one whose dot is higher (smaller dotY) gets its label pushed above
+        const upper = a.dotY <= b.dotY ? a : b;
+        const lower = a.dotY <= b.dotY ? b : a;
+
+        // Push upper label ABOVE its dot
+        upper.ly = upper.dotY - DOT_R - upper.lh - 3;
+        upper.lx = upper.dotX - upper.lw / 2;
+
+        // Push lower label BELOW its dot (natural position)
+        lower.ly = lower.dotY + DOT_R + 3;
+        lower.lx = lower.dotX - lower.lw / 2;
+
+        // If they STILL overlap after above/below split (same dot y), nudge horizontally
+        if (labelsOverlap(upper, lower)) {
+          const midX = (upper.dotX + lower.dotX) / 2;
+          upper.lx = midX - upper.lw - 2;
+          lower.lx = midX + 2;
+        }
+      }
+    }
+    if (!anyFixed) break;
+  }
+
+  // ── Pass 3: draw circles first, then labels on top ────────────────
+  // Draw all circles
+  dotData.forEach(({ dotX, dotY, p }) => {
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur  = 8;
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, DOT_R, 0, Math.PI * 2);
+    ctx.fillStyle = team.primary;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Jersey number
+    ctx.font = `bold ${Math.round(DOT_R * 0.85)}px Bebas Neue, sans-serif`;
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(p.num), dotX, dotY);
+  });
+
+  // Draw all labels on top (so no circle covers a label)
+  ctx.font = 'bold 7px Outfit, sans-serif';
+  dotData.forEach(({ dotX, txt, lw, lh, lx, ly }) => {
+    // Label background
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    roundRect(lx, ly, lw, lh, 2);
+    ctx.fill();
+    // Label text
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(txt, lx + lw/2, ly + lh/2);
+  });
+
+  // Reset text baseline
+  ctx.textBaseline = 'alphabetic';
+  ctx.shadowBlur = 0;
+
+  // ════════════════════════════════════════
+  //  PLAYER LIST  (right side)
+  // ════════════════════════════════════════
+  const grpColor = {
+    GK:  { bg:'rgba(245,197,24,0.22)',  txt:'#fcd34d' },
+    DEF: { bg:'rgba(59,130,246,0.22)',  txt:'#93c5fd' },
+    MID: { bg:'rgba(16,185,129,0.22)',  txt:'#6ee7b7' },
+    FWD: { bg:'rgba(239,68,68,0.22)',   txt:'#fca5a5' },
+  };
+
+  // List header
+  const listHeaderH = 26;
+  const listTotalH  = PITCH_H;  // list matches pitch height exactly
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  ctx.fillRect(LIST_X, PITCH_Y, LIST_W, listHeaderH);
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(LIST_X, PITCH_Y + listHeaderH); ctx.lineTo(W-8, PITCH_Y + listHeaderH); ctx.stroke();
+  ctx.font = 'bold 10px Bebas Neue, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.textAlign = 'left';
+  ctx.letterSpacing = '2px';
+  ctx.fillText('STARTING XI', LIST_X + 12, PITCH_Y + 17);
+  ctx.letterSpacing = '0px';
+
+  // Divider line between pitch and list
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(LIST_X - 4, PITCH_Y); ctx.lineTo(LIST_X - 4, PITCH_Y + listTotalH); ctx.stroke();
+
+  // Sort XI: GK first, then DEF, MID, FWD in slot order
+  const grpOrder = ['GK','DEF','MID','FWD'];
+  const sorted = grpOrder.flatMap(g => xi.filter(({player:p}) => p.grp === g));
+
+  const rowH = (listTotalH - listHeaderH) / 11;
+  const circR = Math.max(10, Math.round(rowH * 0.38)); // jersey circle scales with row height
+  sorted.forEach(({ slot, player: p }, i) => {
+    const gc  = grpColor[p.grp] || grpColor.MID;
+    const ry  = PITCH_Y + listHeaderH + i * rowH;
+    const cx2 = LIST_X + circR + 6;
+    const cy2 = ry + rowH / 2;
+
+    // Row divider
+    if (i > 0) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(LIST_X, ry); ctx.lineTo(W - 8, ry); ctx.stroke();
+    }
+
+    // Jersey circle
+    ctx.shadowColor = 'rgba(0,0,0,0.4)';
+    ctx.shadowBlur  = 4;
+    ctx.beginPath(); ctx.arc(cx2, cy2, circR, 0, Math.PI * 2);
+    ctx.fillStyle = team.primary; ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    const numFont = Math.max(8, Math.round(circR * 0.75));
+    ctx.font = `bold ${numFont}px Bebas Neue, sans-serif`;
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(p.num), cx2, cy2);
+
+    // Player name — scale font to row height
+    const nameFont = Math.max(10, Math.round(rowH * 0.36));
+    ctx.font = `600 ${nameFont}px Outfit, sans-serif`;
+    ctx.fillStyle = '#f0f2f5';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.name, LIST_X + circR * 2 + 10, cy2);
+
+    // Position badge — one badge showing player's natural position only
+    const badgeFont = Math.max(7, Math.round(rowH * 0.28));
+    ctx.font = `bold ${badgeFont}px Outfit, sans-serif`;
+    const badgeTxt = p.pos;
+    const btw = ctx.measureText(badgeTxt).width;
+    const bh2 = Math.round(rowH * 0.5), bw2 = btw + 8;
+    const bx2 = W - 14 - bw2, by2 = cy2 - bh2/2;
+    roundRect(bx2, by2, bw2, bh2, 3);
+    ctx.fillStyle = gc.bg; ctx.fill();
+    ctx.fillStyle = gc.txt;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(badgeTxt, bx2 + bw2/2, cy2);
+  });
+
+  // Reset
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+  ctx.shadowBlur = 0;
+
+  // ── Footer ───────────────────────────────────────────────────────
+  const fy = H - FOOTER_H;
+  ctx.fillStyle = 'rgba(255,255,255,0.015)';
+  ctx.fillRect(0, fy, W, FOOTER_H);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(W, fy); ctx.stroke();
+
+  ctx.font = '500 8px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.28)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('FIFA WORLD CUP 2026  ·  BEST XI BUILDER', 20, fy + FOOTER_H/2);
+
+  // Mini flag stripes (bottom-right)
+  const msw = 18, msh = 5, msGap = 3;
+  const msTotal = stripes.length * msw + (stripes.length-1) * msGap;
+  let msX = W - msTotal - 20;
+  stripes.forEach(c => {
+    ctx.fillStyle = c;
+    roundRect(msX, fy + (FOOTER_H - msh)/2, msw, msh, 2);
+    ctx.fill();
+    msX += msw + msGap;
+  });
+
+  // ── Download ─────────────────────────────────────────────────────
+  const link = document.createElement('a');
+  const slug = team.name.toLowerCase().replace(/\s+/g, '-');
+  link.download = `${slug}-xi-${currentFormation.replace(/-/g,'')}.jpg`;
+  link.href = canvas.toDataURL('image/jpeg', 0.93);
+  link.click();
+  toast('📸 Lineup saved!', 'ok');
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+buildTeamSlider();
+updateCounters();
+</script>
+</body>
+</html>
