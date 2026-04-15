@@ -148,8 +148,11 @@ body::before {
 .team-section { position: relative; z-index: 1; max-width: 1180px; margin: 20px auto 0; padding: 0 18px; }
 .sec-lbl { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .team-scroll-wrap { position: relative; }
-.team-slider { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-behavior: smooth; scrollbar-width: none; }
-.team-slider::-webkit-scrollbar { display: none; }
+.team-slider { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--t-accent) var(--card); }
+.team-slider::-webkit-scrollbar { height: 10px; }
+.team-slider::-webkit-scrollbar-track { background: var(--card); border-radius: 999px; }
+.team-slider::-webkit-scrollbar-thumb { background: linear-gradient(90deg, var(--t-primary), var(--t-accent)); border-radius: 999px; border: 2px solid var(--card); }
+.team-slider::-webkit-scrollbar-thumb:hover { filter: brightness(1.08); }
 .team-scroll-wrap::before, .team-scroll-wrap::after { content: ''; position: absolute; top: 0; bottom: 6px; width: 40px; pointer-events: none; z-index: 3; }
 .team-scroll-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
 .team-scroll-wrap::after  { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
