@@ -148,11 +148,10 @@ body::before {
 .team-section { position: relative; z-index: 1; max-width: 1180px; margin: 20px auto 0; padding: 0 18px; }
 .sec-lbl { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .team-scroll-wrap { position: relative; }
-.team-slider { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--t-accent) var(--card); }
-.team-slider::-webkit-scrollbar { height: 10px; }
-.team-slider::-webkit-scrollbar-track { background: var(--card); border-radius: 999px; }
-.team-slider::-webkit-scrollbar-thumb { background: linear-gradient(90deg, var(--t-primary), var(--t-accent)); border-radius: 999px; border: 2px solid var(--card); }
-.team-slider::-webkit-scrollbar-thumb:hover { filter: brightness(1.08); }
+.team-slider { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--t-accent) var(--card); }
+.team-slider::-webkit-scrollbar { height: 6px; }
+.team-slider::-webkit-scrollbar-track { background: var(--card); border-radius: 3px; }
+.team-slider::-webkit-scrollbar-thumb { background: var(--t-accent); border-radius: 3px; }
 .team-scroll-wrap::before, .team-scroll-wrap::after { content: ''; position: absolute; top: 0; bottom: 6px; width: 40px; pointer-events: none; z-index: 3; }
 .team-scroll-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
 .team-scroll-wrap::after  { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
@@ -190,6 +189,9 @@ body::before {
 .rules-toggle.open .arr { transform: rotate(180deg); }
 .rules-body { overflow: hidden; max-height: 0; transition: max-height .42s cubic-bezier(.4,0,.2,1); }
 .rules-body.open { max-height: 600px; }
+.rules-body::-webkit-scrollbar { width: 6px; }
+.rules-body::-webkit-scrollbar-track { background: var(--bg); }
+.rules-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--r) var(--r); }
 .rule-card { display: flex; align-items: flex-start; gap: 12px; background: rgba(255,255,255,0.025); border-left: 3px solid var(--t-accent); border-radius: 8px; padding: 12px; transition: border-color .4s; }
 .rule-n { font-family: var(--font-h); font-size: 24px; color: var(--t-accent); line-height: 1; min-width: 22px; transition: color .4s; }
@@ -304,7 +306,7 @@ body::before {
 .xi-tally strong { color: var(--t-accent); font-family: var(--font-h); font-size: 17px; transition: color .4s; }
 .tbl-scroll { overflow-y: auto; max-height: 580px; }
 table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-thead th { background: rgba(255,255,255,.035); padding: 9px 11px; text-align: left; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); position: sticky; top:0; z-index:5; border-bottom: 1px solid var(--border); }
+thead th { background: var(--card); padding: 9px 11px; text-align: left; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); position: sticky; top:0; z-index:5; border-bottom: 1px solid var(--border); box-shadow: 0 1px 0 var(--border); }
 tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; cursor: pointer; }
 tbody tr:hover { background: rgba(255,255,255,.035); }
 tbody tr.selected-row { background: color-mix(in srgb, var(--t-primary) 10%, transparent); border-bottom-color: color-mix(in srgb, var(--t-primary) 18%, transparent); }
@@ -381,6 +383,178 @@ tbody tr:hover .row-status:not(.in-xi-status) { border-color: rgba(255,255,255,.
 #toast.show { opacity: 1; }
 #toast.t-err  { border-color: var(--danger); }
 #toast.t-ok   { border-color: var(--success); }
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — Optimized for phones and tablets
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 820px) {
+  .main { 
+    grid-template-columns: 1fr; 
+    gap: 14px; 
+    padding: 0 12px; 
+  }
+  
+  /* Make pitch and squad list stack vertically */
+  .pitch-card, .squad-card { 
+    margin-bottom: 14px; 
+  }
+  
+  /* Adjust hero title sizing */
+  .hero-title { 
+    font-size: clamp(24px, 7vw, 42px); 
+  }
+  
+  .hero-subtitle { 
+    font-size: 12px; 
+    letter-spacing: 2px; 
+  }
+  
+  /* Team cards - smaller on mobile */
+  .tc { 
+    min-width: 110px; 
+    padding: 12px; 
+  }
+  
+  .tc-code { 
+    font-size: 26px; 
+  }
+  
+  .tc-name { 
+    font-size: 13px; 
+  }
+  
+  .tc-slogan { 
+    font-size: 9px; 
+  }
+  
+  /* Rules section - scrollable on mobile */
+  .rules-body.open { 
+    max-height: 400px; 
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  /* Rules grid - single column on small screens */
+  .rules-grid { 
+    grid-template-columns: 1fr; 
+  }
+  
+  /* Pitch player dots - slightly smaller */
+  .p-circle { 
+    width: 30px; 
+    height: 30px; 
+    font-size: 12px; 
+  }
+  
+  .p-name { 
+    font-size: 7.5px; 
+  }
+  
+  /* Modal - full width on mobile */
+  .slot-modal { 
+    width: 94%; 
+    max-width: 94%; 
+    max-height: 85vh; 
+  }
+  
+  .slot-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+  
+  /* Formation picker - 3 columns on mobile */
+  .form-grid { 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 6px; 
+  }
+  
+  .form-btn { 
+    padding: 8px 10px; 
+    font-size: 11px; 
+  }
+  
+  /* Squad table - tighter spacing */
+  .tbl-scroll { 
+    max-height: 480px; 
+  }
+  
+  thead th { 
+    padding: 8px 8px; 
+    font-size: 8px; 
+  }
+  
+  tbody td { 
+    padding: 10px 8px; 
+    font-size: 12px; 
+  }
+  
+  .td-num { 
+    font-size: 9px; 
+  }
+  
+  .pos-badge { 
+    font-size: 8px; 
+    padding: 3px 6px; 
+  }
+  
+  .row-status { 
+    width: 24px; 
+    height: 24px; 
+    font-size: 11px; 
+  }
+  
+  /* Save button - full width on mobile */
+  .save-btn { 
+    width: 100%; 
+    font-size: 12px; 
+    padding: 12px; 
+  }
+  
+  /* Stats pills - stack on mobile */
+  .stats { 
+    flex-direction: column; 
+    align-items: stretch; 
+    gap: 8px; 
+  }
+  
+  .stat-pill { 
+    justify-content: space-between; 
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small phones */
+  .hero-title { 
+    font-size: 22px; 
+  }
+  
+  .tc { 
+    min-width: 95px; 
+    padding: 10px 8px; 
+  }
+  
+  .tc-code { 
+    font-size: 22px; 
+  }
+  
+  .form-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+  
+  .slot-grid { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .p-circle { 
+    width: 28px; 
+    height: 28px; 
+    font-size: 11px; 
+  }
+  
+  .p-name { 
+    font-size: 7px; 
+  }
+}
 </style>
 </head>
 <body>
@@ -441,7 +615,7 @@ tbody tr:hover .row-status:not(.in-xi-status) { border-color: rgba(255,255,255,.
       <div class="rule-card"><div class="rule-n">05</div><div class="rule-t"><strong>Move a Placed Player</strong>Click any filled player on the pitch to open the slot picker and reassign them to a different position.</div></div>
       <div class="rule-card"><div class="rule-n">06</div><div class="rule-t"><strong>Remove a Player</strong>Click a placed player in the squad table (highlighted in gold) to remove them from your XI.</div></div>
       <div class="rule-card"><div class="rule-n">07</div><div class="rule-t"><strong>XI Rules</strong>Exactly 11 players, exactly 1 goalkeeper. Formation or team switch resets your XI.</div></div>
-      <div class="rule-card"><div class="rule-n">08</div><div class="rule-t"><strong>Save &amp; Share</strong>Save and share your Best XI once your lineup is complete.</div></div>
+      <div class="rule-card"><div class="rule-n">08</div><div class="rule-t"><strong>Save & Share</strong>Once your lineup is complete, click "Save Lineup as JPG" to download a shareable image of your Best XI.</div></div>
     </div>
   </div>
 </div>
@@ -540,7 +714,7 @@ tbody tr:hover .row-status:not(.in-xi-status) { border-color: rgba(255,255,255,.
       <table>
         <thead>
           <tr>
-            <th>#</th>
+            <th>№</th>
             <th>Player Name</th>
             <th>Pos</th>
             <th>✓</th>
@@ -571,7 +745,8 @@ tbody tr:hover .row-status:not(.in-xi-status) { border-color: rgba(255,255,255,.
 <script>
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║  TEAM DATA  — 2026 FIFA World Cup squads                         ║
-// ║  Squad numbers are per official FIFA 2026 submissions            ║
+// ║  Squad numbers: Official FIFA squad lists publish June 1, 2026.  ║
+// ║  Numbers below are projected based on recent callups.            ║
 // ╚══════════════════════════════════════════════════════════════════╝
 const TEAMS = {
 
@@ -580,33 +755,42 @@ const TEAMS = {
     id:'brazil', name:'Brazil', emoji:'🇧🇷', slogan:'A Seleção',
     primary:'#009C3B', accent:'#FEDF00', flag:['#009C3B','#FEDF00','#002776'],
     squad:[
-      { num:1,  name:'Ederson',            pos:'GK',  grp:'GK'  },
-      { num:2,  name:'Bento',              pos:'GK',  grp:'GK'  },
-      { num:3,  name:'Alisson',            pos:'GK',  grp:'GK'  },
-      { num:4,  name:'Danilo Soares',      pos:'RB',  grp:'DEF' },
-      { num:5,  name:'Wesley',             pos:'RB',  grp:'DEF' },
-      { num:6,  name:'Marquinhos',         pos:'CB',  grp:'DEF' },
-      { num:7,  name:'Bremer',             pos:'CB',  grp:'DEF' },
-      { num:8,  name:'G. Magalhães',       pos:'CB',  grp:'DEF' },
-      { num:9,  name:'Ibañez',             pos:'CB',  grp:'DEF' },
-      { num:10, name:'Léo Pereira',        pos:'CB',  grp:'DEF' },
-      { num:11, name:'D. Santos',          pos:'LB',  grp:'DEF' },
-      { num:12, name:'Casemiro',           pos:'CDM', grp:'MID' },
-      { num:13, name:'B. Guimarães',       pos:'CM',  grp:'MID' },
-      { num:14, name:'Andrey Santos',      pos:'CM',  grp:'MID' },
-      { num:15, name:'Fabinho',            pos:'CDM', grp:'MID' },
-      { num:16, name:'Gabriel Sara',       pos:'CM',  grp:'MID' },
-      { num:17, name:'Danilo',             pos:'CM',  grp:'MID' },
-      { num:18, name:'Vinícius Jr.',       pos:'LW',  grp:'FWD' },
-      { num:19, name:'Raphinha',           pos:'RW',  grp:'FWD' },
-      { num:20, name:'Martinelli',         pos:'LW',  grp:'FWD' },
-      { num:21, name:'João Pedro',         pos:'ST',  grp:'FWD' },
-      { num:22, name:'M. Cunha',           pos:'ST',  grp:'FWD' },
-      { num:23, name:'L. Henrique',        pos:'RW',  grp:'FWD' },
+      // GOALKEEPERS
+      { num:1,  name:'Alisson',            pos:'GK',  grp:'GK'  },
+      { num:23, name:'Ederson',            pos:'GK',  grp:'GK'  },
+      { num:12, name:'Bento',              pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
+      { num:2,  name:'Danilo',             pos:'RB',  grp:'DEF' },
+      { num:13, name:'Danilo Soares',      pos:'LB',  grp:'DEF' },
+      { num:14, name:'Éder Militão',       pos:'CB',  grp:'DEF' },
+      { num:3,  name:'Marquinhos',         pos:'CB',  grp:'DEF' },
+      { num:4,  name:'Bremer',             pos:'CB',  grp:'DEF' },
+      { num:15, name:'G. Magalhães',       pos:'CB',  grp:'DEF' },
+      { num:25, name:'Ibañez',             pos:'CB',  grp:'DEF' },
+      { num:16, name:'Léo Pereira',        pos:'CB',  grp:'DEF' },
+      { num:6,  name:'D. Santos',          pos:'LB',  grp:'DEF' },
+      { num:26, name:'Wesley',             pos:'RB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:5,  name:'Casemiro',           pos:'CDM', grp:'MID' },
+      { num:8,  name:'B. Guimarães',       pos:'CM',  grp:'MID' },
+      { num:18, name:'Andrey Santos',      pos:'CM',  grp:'MID' },
+      { num:17, name:'Fabinho',            pos:'CDM', grp:'MID' },
+      { num:22, name:'Gabriel Sara',       pos:'CM',  grp:'MID' },
+      
+      // FORWARDS
+      { num:7,  name:'Vinícius Jr.',       pos:'LW',  grp:'FWD' },
+      { num:11, name:'Raphinha',           pos:'RW',  grp:'FWD' },
+      { num:19, name:'Martinelli',         pos:'LW',  grp:'FWD' },
+      { num:9,  name:'João Pedro',         pos:'ST',  grp:'FWD' },
+      { num:21, name:'M. Cunha',           pos:'ST',  grp:'FWD' },
+      { num:20, name:'L. Henrique',        pos:'RW',  grp:'FWD' },
       { num:24, name:'Endrick',            pos:'ST',  grp:'FWD' },
-      { num:25, name:'Igor Thiago',        pos:'ST',  grp:'FWD' },
-      { num:26, name:'Rodrygo',            pos:'RW',  grp:'FWD' },
-      { num:27, name:'Neymar Jr.',         pos:'LW',  grp:'FWD' }
+      { num:27, name:'Igor Thiago',        pos:'ST',  grp:'FWD' },
+      { num:10, name:'Rodrygo',            pos:'RW',  grp:'FWD' },
+      // Big name with injury concerns
+      { num:77, name:'Neymar Jr.',         pos:'LW',  grp:'FWD' }, // Injury history, may not make cut
     ]
   },
 
@@ -615,32 +799,39 @@ const TEAMS = {
     id:'france', name:'France', emoji:'🇫🇷', slogan:'Les Bleus',
     primary:'#003189', accent:'#ED2939', flag:['#003189','#FFFFFF','#ED2939'],
     squad:[
-      { num:1,  name:'Maignan',            pos:'GK',  grp:'GK'  },
-      { num:2,  name:'Brice Samba',        pos:'GK',  grp:'GK'  },
-      { num:3,  name:'Chevalier',          pos:'GK',  grp:'GK'  },
-      { num:4,  name:'Koundé',             pos:'RB',  grp:'DEF' },
-      { num:5,  name:'T. Hernandez',       pos:'LB',  grp:'DEF' },
-      { num:6,  name:'L. Hernandez',       pos:'CB',  grp:'DEF' },
-      { num:7,  name:'Upamecano',          pos:'CB',  grp:'DEF' },
-      { num:8,  name:'Konaté',             pos:'CB',  grp:'DEF' },
-      { num:9,  name:'Malo Gusto',         pos:'RB',  grp:'DEF' },
-      { num:10, name:'Saliba',             pos:'CB',  grp:'DEF' },
-      { num:11, name:'Lacroix',            pos:'CB',  grp:'DEF' },
-      { num:12, name:'Tchouaméni',         pos:'CDM', grp:'MID' },
-      { num:13, name:'Camavinga',          pos:'CM',  grp:'MID' },
+      // GOALKEEPERS
+      { num:16, name:'Maignan',            pos:'GK',  grp:'GK'  },
+      { num:1,  name:'Brice Samba',        pos:'GK',  grp:'GK'  },
+      { num:23, name:'Chevalier',          pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
+      { num:5,  name:'Koundé',             pos:'RB',  grp:'DEF' },
+      { num:3,  name:'T. Hernandez',       pos:'LB',  grp:'DEF' },
+      { num:21, name:'L. Hernandez',       pos:'CB',  grp:'DEF' },
+      { num:4,  name:'Upamecano',          pos:'CB',  grp:'DEF' },
+      { num:24, name:'Konaté',             pos:'CB',  grp:'DEF' },
+      { num:2,  name:'Malo Gusto',         pos:'RB',  grp:'DEF' },
+      { num:17, name:'Saliba',             pos:'CB',  grp:'DEF' },
+      { num:25, name:'Lacroix',            pos:'CB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:8,  name:'Tchouaméni',         pos:'CDM', grp:'MID' },
+      { num:6,  name:'Camavinga',          pos:'CM',  grp:'MID' },
       { num:14, name:'Rabiot',             pos:'CM',  grp:'MID' },
-      { num:15, name:'Kanté',              pos:'CDM', grp:'MID' },
-      { num:16, name:'Manu Koné',          pos:'CM',  grp:'MID' },
-      { num:17, name:'Zaïre-Emery',        pos:'CM',  grp:'MID' },
+      { num:13, name:'Kanté',              pos:'CDM', grp:'MID' },
+      { num:19, name:'Manu Koné',          pos:'CM',  grp:'MID' },
+      { num:22, name:'Zaïre-Emery',        pos:'CM',  grp:'MID' },
       { num:18, name:'Cherki',             pos:'CAM', grp:'MID' },
-      { num:19, name:'Mbappé',             pos:'ST',  grp:'FWD' },
-      { num:20, name:'Dembélé',            pos:'RW',  grp:'FWD' },
-      { num:21, name:'Olise',              pos:'RW',  grp:'FWD' },
-      { num:22, name:'Barcola',            pos:'LW',  grp:'FWD' },
-      { num:23, name:'M. Thuram',          pos:'ST',  grp:'FWD' },
-      { num:24, name:'Kolo Muani',         pos:'ST',  grp:'FWD' },
-      { num:25, name:'Désiré Doué',        pos:'CAM', grp:'MID' },
-      { num:26, name:'Griezmann',          pos:'ST',  grp:'FWD' },
+      { num:29, name:'Désiré Doué',        pos:'CAM', grp:'MID' },
+      
+      // FORWARDS
+      { num:10, name:'Mbappé',             pos:'ST',  grp:'FWD' },
+      { num:11, name:'Dembélé',            pos:'RW',  grp:'FWD' },
+      { num:20, name:'Olise',              pos:'RW',  grp:'FWD' },
+      { num:26, name:'Barcola',            pos:'LW',  grp:'FWD' },
+      { num:15, name:'M. Thuram',          pos:'ST',  grp:'FWD' },
+      { num:12, name:'Kolo Muani',         pos:'ST',  grp:'FWD' },
+      { num:7,  name:'Griezmann',          pos:'ST',  grp:'FWD' },
     ]
   },
 
@@ -649,32 +840,41 @@ const TEAMS = {
     id:'argentina', name:'Argentina', emoji:'🇦🇷', slogan:'La Albiceleste',
     primary:'#74ACDF', accent:'#FFFFFF', flag:['#74ACDF','#FFFFFF','#74ACDF'],
     squad:[
-      { num:1,  name:'E. Martínez',        pos:'GK',  grp:'GK'  },
-      { num:2,  name:'G. Rulli',           pos:'GK',  grp:'GK'  },
-      { num:3,  name:'W. Benítez',         pos:'GK',  grp:'GK'  },
-      { num:4,  name:'N. Molina',          pos:'RB',  grp:'DEF' },
-      { num:5,  name:'Montiel',            pos:'RB',  grp:'DEF' },
-      { num:6,  name:'C. Romero',          pos:'CB',  grp:'DEF' },
-      { num:7,  name:'L. Martínez',        pos:'CB',  grp:'DEF' },
-      { num:8,  name:'Otamendi',           pos:'CB',  grp:'DEF' },
-      { num:9,  name:'Senesi',             pos:'CB',  grp:'DEF' },
-      { num:10, name:'Tagliafico',         pos:'LB',  grp:'DEF' },
-      { num:11, name:'Acuña',              pos:'LB',  grp:'DEF' },
-      { num:12, name:'De Paul',            pos:'CM',  grp:'MID' },
-      { num:13, name:'E. Fernández',       pos:'CM',  grp:'MID' },
-      { num:14, name:'Mac Allister',       pos:'CM',  grp:'MID' },
-      { num:15, name:'Paredes',            pos:'CDM', grp:'MID' },
+      // GOALKEEPERS
+      { num:23, name:'E. Martínez',        pos:'GK',  grp:'GK'  },
+      { num:12, name:'G. Rulli',           pos:'GK',  grp:'GK'  },
+      { num:1,  name:'W. Benítez',         pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
+      { num:26, name:'N. Molina',          pos:'RB',  grp:'DEF' },
+      { num:4,  name:'Montiel',            pos:'RB',  grp:'DEF' },
+      { num:13, name:'C. Romero',          pos:'CB',  grp:'DEF' },
+      { num:25, name:'L. Martínez',        pos:'CB',  grp:'DEF' },
+      { num:19, name:'Otamendi',           pos:'CB',  grp:'DEF' },
+      { num:6,  name:'Senesi',             pos:'CB',  grp:'DEF' },
+      { num:3,  name:'Tagliafico',         pos:'LB',  grp:'DEF' },
+      { num:24, name:'Acuña',              pos:'LB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:7,  name:'De Paul',            pos:'CM',  grp:'MID' },
+      { num:8,  name:'E. Fernández',       pos:'CM',  grp:'MID' },
+      { num:20, name:'Mac Allister',       pos:'CM',  grp:'MID' },
+      { num:5,  name:'Paredes',            pos:'CDM', grp:'MID' },
       { num:16, name:'Palacios',           pos:'CM',  grp:'MID' },
-      { num:17, name:'Almada',             pos:'CAM', grp:'MID' },
-      { num:18, name:'Nico Paz',           pos:'CAM', grp:'MID' },
-      { num:19, name:'Lo Celso',           pos:'CAM', grp:'MID' },
-      { num:20, name:'Messi',              pos:'RW',  grp:'FWD' },
-      { num:21, name:'J. Álvarez',         pos:'ST',  grp:'FWD' },
+      { num:27, name:'Almada',             pos:'CAM', grp:'MID' },
+      { num:28, name:'Nico Paz',           pos:'CAM', grp:'MID' },
+      { num:29, name:'Lo Celso',           pos:'CAM', grp:'MID' },
+      
+      // FORWARDS
+      { num:10, name:'Messi',              pos:'RW',  grp:'FWD' }, // ICONIC #10
+      { num:9,  name:'J. Álvarez',         pos:'ST',  grp:'FWD' },
       { num:22, name:'L. Martínez',        pos:'ST',  grp:'FWD' },
-      { num:23, name:'N. González',        pos:'LW',  grp:'FWD' },
-      { num:24, name:'Garnacho',           pos:'LW',  grp:'FWD' },
-      { num:25, name:'Á. Correa',          pos:'ST',  grp:'FWD' },
-      { num:26, name:'G. Simeone',         pos:'LW',  grp:'FWD' },
+      { num:15, name:'N. González',        pos:'LW',  grp:'FWD' },
+      { num:17, name:'Garnacho',           pos:'LW',  grp:'FWD' },
+      { num:11, name:'Á. Correa',          pos:'ST',  grp:'FWD' },
+      { num:18, name:'G. Simeone',         pos:'LW',  grp:'FWD' },
+      // Rotation/fringe player
+      { num:21, name:'Dybala',             pos:'CAM', grp:'MID' }, // May not make final 26
     ]
   },
 
@@ -683,32 +883,41 @@ const TEAMS = {
     id:'germany', name:'Germany', emoji:'🇩🇪', slogan:'Die Mannschaft',
     primary:'#DD0000', accent:'#FFCE00', flag:['#000000','#DD0000','#FFCE00'],
     squad:[
-      { num:1,  name:'O. Baumann',         pos:'GK',  grp:'GK'  },
-      { num:2,  name:'Nübel',              pos:'GK',  grp:'GK'  },
-      { num:3,  name:'Urbig',              pos:'GK',  grp:'GK'  },
-      { num:4,  name:'Kimmich',            pos:'RB',  grp:'DEF' },
-      { num:5,  name:'Rüdiger',            pos:'CB',  grp:'DEF' },
-      { num:6,  name:'Tah',                pos:'CB',  grp:'DEF' },
-      { num:7,  name:'Schlotterbeck',      pos:'CB',  grp:'DEF' },
-      { num:8,  name:'Raum',               pos:'LB',  grp:'DEF' },
-      { num:9,  name:'W. Anton',           pos:'CB',  grp:'DEF' },
-      { num:10, name:'Thiaw',              pos:'CB',  grp:'DEF' },
-      { num:11, name:'N. Brown',           pos:'LB',  grp:'DEF' },
-      { num:12, name:'Vagnoman',           pos:'RB',  grp:'DEF' },
-      { num:13, name:'P. Groß',            pos:'CM',  grp:'MID' },
-      { num:14, name:'Pavlović',           pos:'CDM', grp:'MID' },
-      { num:15, name:'Goretzka',           pos:'CM',  grp:'MID' },
-      { num:16, name:'A. Stach',           pos:'CDM', grp:'MID' },
-      { num:17, name:'Musiala',            pos:'CAM', grp:'MID' },
-      { num:18, name:'Wirtz',              pos:'CAM', grp:'MID' },
-      { num:19, name:'Havertz',            pos:'ST',  grp:'FWD' },
-      { num:20, name:'Sané',               pos:'RW',  grp:'FWD' },
-      { num:21, name:'D. Undav',           pos:'ST',  grp:'FWD' },
-      { num:22, name:'K. Schade',          pos:'RW',  grp:'FWD' },
-      { num:23, name:'Gnabry',             pos:'RW',  grp:'FWD' },
-      { num:24, name:'Führich',            pos:'LW',  grp:'FWD' },
-      { num:25, name:'Leweling',           pos:'LW',  grp:'FWD' },
-      { num:26, name:'L. Karl',            pos:'ST',  grp:'FWD' },
+      // GOALKEEPERS
+      { num:22, name:'O. Baumann',         pos:'GK',  grp:'GK'  },
+      { num:12, name:'Nübel',              pos:'GK',  grp:'GK'  },
+      { num:1,  name:'Urbig',              pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
+      { num:6,  name:'Kimmich',            pos:'RB',  grp:'DEF' },
+      { num:2,  name:'Rüdiger',            pos:'CB',  grp:'DEF' },
+      { num:4,  name:'Tah',                pos:'CB',  grp:'DEF' },
+      { num:15, name:'Schlotterbeck',      pos:'CB',  grp:'DEF' },
+      { num:3,  name:'Raum',               pos:'LB',  grp:'DEF' },
+      { num:16, name:'W. Anton',           pos:'CB',  grp:'DEF' },
+      { num:5,  name:'Thiaw',              pos:'CB',  grp:'DEF' },
+      { num:24, name:'N. Brown',           pos:'LB',  grp:'DEF' },
+      { num:20, name:'Vagnoman',           pos:'RB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:23, name:'P. Groß',            pos:'CM',  grp:'MID' },
+      { num:8,  name:'Pavlović',           pos:'CDM', grp:'MID' },
+      { num:21, name:'Goretzka',           pos:'CM',  grp:'MID' },
+      { num:18, name:'A. Stach',           pos:'CDM', grp:'MID' },
+      { num:10, name:'Musiala',            pos:'CAM', grp:'MID' },
+      { num:17, name:'Wirtz',              pos:'CAM', grp:'MID' },
+      
+      // FORWARDS
+      { num:7,  name:'Havertz',            pos:'ST',  grp:'FWD' },
+      { num:19, name:'Sané',               pos:'RW',  grp:'FWD' },
+      { num:9,  name:'D. Undav',           pos:'ST',  grp:'FWD' },
+      { num:14, name:'K. Schade',          pos:'RW',  grp:'FWD' },
+      { num:11, name:'Gnabry',             pos:'RW',  grp:'FWD' },
+      { num:26, name:'Führich',            pos:'LW',  grp:'FWD' },
+      { num:27, name:'Leweling',           pos:'LW',  grp:'FWD' },
+      { num:28, name:'L. Karl',            pos:'ST',  grp:'FWD' },
+      // Veteran option - may not make cut
+      { num:25, name:'Müller',             pos:'ST',  grp:'FWD' }, // Age 36, veteran depth
     ]
   },
 
@@ -717,32 +926,40 @@ const TEAMS = {
     id:'spain', name:'Spain', emoji:'🇪🇸', slogan:'La Roja',
     primary:'#CC0B1E', accent:'#F5C518', flag:['#CC0B1E','#F5C518','#CC0B1E'],
     squad:[
+      // GOALKEEPERS
       { num:1,  name:'Unai Simón',         pos:'GK',  grp:'GK'  },
-      { num:2,  name:'David Raya',         pos:'GK',  grp:'GK'  },
-      { num:3,  name:'Joan García',        pos:'GK',  grp:'GK'  },
-      { num:4,  name:'Pedro Porro',        pos:'RB',  grp:'DEF' },
-      { num:5,  name:'Llorente',           pos:'RB',  grp:'DEF' },
-      { num:6,  name:'Cucurella',          pos:'LB',  grp:'DEF' },
-      { num:7,  name:'Grimaldo',           pos:'LB',  grp:'DEF' },
-      { num:8,  name:'Pau Cubarsí',        pos:'CB',  grp:'DEF' },
-      { num:9,  name:'Dean Huijsen',       pos:'CB',  grp:'DEF' },
-      { num:10, name:'Laporte',            pos:'CB',  grp:'DEF' },
-      { num:11, name:'Le Normand',         pos:'CB',  grp:'DEF' },
-      { num:12, name:'Rodri',              pos:'CDM', grp:'MID' },
-      { num:13, name:'Zubimendi',          pos:'CDM', grp:'MID' },
-      { num:14, name:'Pedri',              pos:'CM',  grp:'MID' },
-      { num:15, name:'Fabián Ruiz',        pos:'CM',  grp:'MID' },
-      { num:16, name:'Gavi',               pos:'CM',  grp:'MID' },
-      { num:17, name:'Fermín López',       pos:'CAM', grp:'MID' },
-      { num:18, name:'Álex Baena',         pos:'CAM', grp:'MID' },
-      { num:19, name:'Dani Olmo',          pos:'CAM', grp:'MID' },
-      { num:20, name:'Lamine Yamal',       pos:'RW',  grp:'FWD' },
-      { num:21, name:'Nico Williams',      pos:'LW',  grp:'FWD' },
-      { num:22, name:'Morata',             pos:'ST',  grp:'FWD' },
-      { num:23, name:'Oyarzabal',          pos:'ST',  grp:'FWD' },
-      { num:24, name:'Ferran Torres',      pos:'RW',  grp:'FWD' },
-      { num:25, name:'Ayoze Pérez',        pos:'ST',  grp:'FWD' },
-      { num:26, name:'Yéremy Pino',        pos:'RW',  grp:'FWD' },
+      { num:23, name:'David Raya',         pos:'GK',  grp:'GK'  },
+      { num:13, name:'Joan García',        pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
+      { num:2,  name:'Carvajal',           pos:'RB',  grp:'DEF' }, // Injury/age concerns
+      { num:20, name:'Pedro Porro',        pos:'RB',  grp:'DEF' },
+      { num:14, name:'Llorente',           pos:'RB',  grp:'DEF' },
+      { num:24, name:'Cucurella',          pos:'LB',  grp:'DEF' },
+      { num:3,  name:'Grimaldo',           pos:'LB',  grp:'DEF' },
+      { num:5,  name:'Pau Cubarsí',        pos:'CB',  grp:'DEF' },
+      { num:6,  name:'Dean Huijsen',       pos:'CB',  grp:'DEF' },
+      { num:4,  name:'Laporte',            pos:'CB',  grp:'DEF' },
+      { num:12, name:'Le Normand',         pos:'CB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:16, name:'Rodri',              pos:'CDM', grp:'MID' },
+      { num:18, name:'Zubimendi',          pos:'CDM', grp:'MID' },
+      { num:8,  name:'Pedri',              pos:'CM',  grp:'MID' },
+      { num:22, name:'Fabián Ruiz',        pos:'CM',  grp:'MID' },
+      { num:9,  name:'Gavi',               pos:'CM',  grp:'MID' },
+      { num:25, name:'Fermín López',       pos:'CAM', grp:'MID' },
+      { num:21, name:'Álex Baena',         pos:'CAM', grp:'MID' },
+      { num:10, name:'Dani Olmo',          pos:'CAM', grp:'MID' },
+      
+      // FORWARDS
+      { num:19, name:'Lamine Yamal',       pos:'RW',  grp:'FWD' },
+      { num:11, name:'Nico Williams',      pos:'LW',  grp:'FWD' },
+      { num:7,  name:'Morata',             pos:'ST',  grp:'FWD' },
+      { num:15, name:'Oyarzabal',          pos:'ST',  grp:'FWD' },
+      { num:17, name:'Ferran Torres',      pos:'RW',  grp:'FWD' },
+      { num:26, name:'Ayoze Pérez',        pos:'ST',  grp:'FWD' },
+      { num:27, name:'Yéremy Pino',        pos:'RW',  grp:'FWD' },
     ]
   },
 
@@ -751,32 +968,39 @@ const TEAMS = {
     id:'portugal', name:'Portugal', emoji:'🇵🇹', slogan:'A Seleção das Quinas',
     primary:'#006600', accent:'#FF0000', flag:['#006600','#FF0000','#006600'],
     squad:[
+      // GOALKEEPERS
       { num:1,  name:'Diogo Costa',        pos:'GK',  grp:'GK'  },
-      { num:2,  name:'José Sá',            pos:'GK',  grp:'GK'  },
-      { num:3,  name:'Rui Silva',          pos:'GK',  grp:'GK'  },
-      { num:4,  name:'Diogo Dalot',        pos:'RB',  grp:'DEF' },
-      { num:5,  name:'João Cancelo',       pos:'RB',  grp:'DEF' },
-      { num:6,  name:'Nuno Mendes',        pos:'LB',  grp:'DEF' },
-      { num:7,  name:'G. Inácio',          pos:'CB',  grp:'DEF' },
-      { num:8,  name:'Renato Veiga',       pos:'CB',  grp:'DEF' },
-      { num:9,  name:'A. Silva',           pos:'CB',  grp:'DEF' },
-      { num:10, name:'T. Araújo',          pos:'CB',  grp:'DEF' },
-      { num:11, name:'B. Fernandes',       pos:'CAM', grp:'MID' },
-      { num:12, name:'Vitinha',            pos:'CM',  grp:'MID' },
-      { num:13, name:'João Neves',         pos:'CDM', grp:'MID' },
-      { num:14, name:'Rúben Neves',        pos:'CDM', grp:'MID' },
-      { num:15, name:'Samu Costa',         pos:'CDM', grp:'MID' },
-      { num:16, name:'M. Fernandes',       pos:'CM',  grp:'MID' },
+      { num:22, name:'José Sá',            pos:'GK',  grp:'GK'  },
+      { num:12, name:'Rui Silva',          pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
+      { num:2,  name:'Diogo Dalot',        pos:'RB',  grp:'DEF' },
+      { num:20, name:'João Cancelo',       pos:'RB',  grp:'DEF' },
+      { num:19, name:'Nuno Mendes',        pos:'LB',  grp:'DEF' },
+      { num:14, name:'G. Inácio',          pos:'CB',  grp:'DEF' },
+      { num:24, name:'Renato Veiga',       pos:'CB',  grp:'DEF' },
+      { num:3,  name:'A. Silva',           pos:'CB',  grp:'DEF' },
+      { num:4,  name:'T. Araújo',          pos:'CB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:8,  name:'B. Fernandes',       pos:'CAM', grp:'MID' },
+      { num:23, name:'Vitinha',            pos:'CM',  grp:'MID' },
+      { num:18, name:'João Neves',         pos:'CDM', grp:'MID' },
+      { num:15, name:'Rúben Neves',        pos:'CDM', grp:'MID' },
+      { num:16, name:'Samu Costa',         pos:'CDM', grp:'MID' },
+      { num:13, name:'M. Fernandes',       pos:'CM',  grp:'MID' },
       { num:17, name:'P. Gonçalves',       pos:'CAM', grp:'MID' },
-      { num:18, name:'R. Mora',            pos:'CAM', grp:'MID' },
-      { num:19, name:'Cristiano Ronaldo',  pos:'ST',  grp:'FWD' },
-      { num:20, name:'Rafael Leão',        pos:'LW',  grp:'FWD' },
-      { num:21, name:'Pedro Neto',         pos:'RW',  grp:'FWD' },
-      { num:22, name:'F. Conceição',       pos:'RW',  grp:'FWD' },
-      { num:23, name:'Trincão',            pos:'RW',  grp:'FWD' },
-      { num:24, name:'João Félix',         pos:'CAM', grp:'MID' },
-      { num:25, name:'G. Ramos',           pos:'ST',  grp:'FWD' },
-      { num:26, name:'Ricardo Horta',      pos:'LW',  grp:'FWD' },
+      { num:25, name:'R. Mora',            pos:'CAM', grp:'MID' },
+      { num:11, name:'João Félix',         pos:'CAM', grp:'MID' },
+      
+      // FORWARDS
+      { num:7,  name:'Cristiano Ronaldo',  pos:'ST',  grp:'FWD' }, // CR7
+      { num:10, name:'Rafael Leão',        pos:'LW',  grp:'FWD' },
+      { num:9,  name:'Pedro Neto',         pos:'RW',  grp:'FWD' },
+      { num:21, name:'F. Conceição',       pos:'RW',  grp:'FWD' },
+      { num:26, name:'Trincão',            pos:'RW',  grp:'FWD' },
+      { num:28, name:'G. Ramos',           pos:'ST',  grp:'FWD' },
+      { num:27, name:'Ricardo Horta',      pos:'LW',  grp:'FWD' },
     ]
   },
 
@@ -785,32 +1009,40 @@ const TEAMS = {
     id:'croatia', name:'Croatia', emoji:'🇭🇷', slogan:'Vatreni',
     primary:'#FF0000', accent:'#003DA5', flag:['#FF0000','#FFFFFF','#003DA5'],
     squad:[
+      // GOALKEEPERS
       { num:1,  name:'Livaković',          pos:'GK',  grp:'GK'  },
-      { num:2,  name:'Kotarski',           pos:'GK',  grp:'GK'  },
-      { num:3,  name:'Gvardiol',           pos:'CB',  grp:'DEF' },
-      { num:4,  name:'Ćaleta-Car',         pos:'CB',  grp:'DEF' },
-      { num:5,  name:'J. Šutalo',          pos:'CB',  grp:'DEF' },
-      { num:6,  name:'Stanišić',           pos:'RB',  grp:'DEF' },
-      { num:7,  name:'Pongračić',          pos:'CB',  grp:'DEF' },
-      { num:8,  name:'K. Jakić',           pos:'CDM', grp:'MID' },
-      { num:9,  name:'M. Erlić',           pos:'CB',  grp:'DEF' },
-      { num:10, name:'L. Vušković',        pos:'CB',  grp:'DEF' },
-      { num:11, name:'I. Smolčić',         pos:'RB',  grp:'DEF' },
-      { num:12, name:'Modrić',             pos:'CM',  grp:'MID' },
-      { num:13, name:'M. Pašalić',         pos:'CM',  grp:'MID' },
-      { num:14, name:'N. Vlašić',          pos:'CAM', grp:'MID' },
-      { num:15, name:'Lovro Majer',        pos:'CAM', grp:'MID' },
-      { num:16, name:'L. Sučić',           pos:'CM',  grp:'MID' },
-      { num:17, name:'Baturina',           pos:'CAM', grp:'MID' },
-      { num:18, name:'P. Sučić',           pos:'CM',  grp:'MID' },
-      { num:19, name:'N. Moro',            pos:'CDM', grp:'MID' },
-      { num:20, name:'T. Fruk',            pos:'ST',  grp:'FWD' },
-      { num:21, name:'Perišić',            pos:'LW',  grp:'FWD' },
-      { num:22, name:'Kramarić',           pos:'ST',  grp:'FWD' },
-      { num:23, name:'Budimir',            pos:'ST',  grp:'FWD' },
-      { num:24, name:'Marco Pašalić',      pos:'RW',  grp:'FWD' },
-      { num:25, name:'P. Musa',            pos:'ST',  grp:'FWD' },
-      { num:26, name:'Matanović',          pos:'ST',  grp:'FWD' },
+      { num:23, name:'Kotarski',           pos:'GK',  grp:'GK'  },
+      { num:12, name:'Labrović',           pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
+      { num:4,  name:'Gvardiol',           pos:'CB',  grp:'DEF' },
+      { num:5,  name:'Ćaleta-Car',         pos:'CB',  grp:'DEF' },
+      { num:6,  name:'J. Šutalo',          pos:'CB',  grp:'DEF' },
+      { num:2,  name:'Stanišić',           pos:'RB',  grp:'DEF' },
+      { num:21, name:'Pongračić',          pos:'CB',  grp:'DEF' },
+      { num:24, name:'M. Erlić',           pos:'CB',  grp:'DEF' },
+      { num:25, name:'L. Vušković',        pos:'CB',  grp:'DEF' },
+      { num:22, name:'I. Smolčić',         pos:'RB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:10, name:'Modrić',             pos:'CM',  grp:'MID' }, // #10
+      { num:15, name:'M. Pašalić',         pos:'CM',  grp:'MID' },
+      { num:13, name:'N. Vlašić',          pos:'CAM', grp:'MID' },
+      { num:8,  name:'Lovro Majer',        pos:'CAM', grp:'MID' },
+      { num:7,  name:'L. Sučić',           pos:'CM',  grp:'MID' },
+      { num:26, name:'Baturina',           pos:'CAM', grp:'MID' },
+      { num:27, name:'P. Sučić',           pos:'CM',  grp:'MID' },
+      { num:18, name:'N. Moro',            pos:'CDM', grp:'MID' },
+      { num:19, name:'K. Jakić',           pos:'CDM', grp:'MID' },
+      
+      // FORWARDS
+      { num:17, name:'Perišić',            pos:'LW',  grp:'FWD' },
+      { num:9,  name:'Kramarić',           pos:'ST',  grp:'FWD' },
+      { num:16, name:'Budimir',            pos:'ST',  grp:'FWD' },
+      { num:20, name:'Marco Pašalić',      pos:'RW',  grp:'FWD' },
+      { num:11, name:'P. Musa',            pos:'ST',  grp:'FWD' },
+      { num:14, name:'Matanović',          pos:'ST',  grp:'FWD' },
+      { num:28, name:'T. Fruk',            pos:'ST',  grp:'FWD' },
     ]
   },
 
@@ -819,32 +1051,40 @@ const TEAMS = {
     id:'netherlands', name:'Netherlands', emoji:'🇳🇱', slogan:'Oranje',
     primary:'#FF6600', accent:'#FFFFFF', flag:['#AE1C28','#FFFFFF','#21468B'],
     squad:[
+      // GOALKEEPERS
       { num:1,  name:'Verbruggen',         pos:'GK',  grp:'GK'  },
-      { num:2,  name:'M. Flekken',         pos:'GK',  grp:'GK'  },
-      { num:3,  name:'J. Bijlow',          pos:'GK',  grp:'GK'  },
+      { num:23, name:'M. Flekken',         pos:'GK',  grp:'GK'  },
+      { num:13, name:'J. Bijlow',          pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
       { num:4,  name:'Van Dijk',           pos:'CB',  grp:'DEF' },
-      { num:5,  name:'J. Timber',          pos:'CB',  grp:'DEF' },
-      { num:6,  name:'Aké',                pos:'CB',  grp:'DEF' },
-      { num:7,  name:'Van de Ven',         pos:'CB',  grp:'DEF' },
-      { num:8,  name:'De Ligt',            pos:'CB',  grp:'DEF' },
-      { num:9,  name:'De Vrij',            pos:'CB',  grp:'DEF' },
-      { num:10, name:'Van Hecke',          pos:'CB',  grp:'DEF' },
-      { num:11, name:'Dumfries',           pos:'RB',  grp:'DEF' },
-      { num:12, name:'Frimpong',           pos:'RB',  grp:'DEF' },
-      { num:13, name:'Geertruida',         pos:'RB',  grp:'DEF' },
-      { num:14, name:'J. Hato',            pos:'LB',  grp:'DEF' },
-      { num:15, name:'F. de Jong',         pos:'CDM', grp:'MID' },
-      { num:16, name:'Reijnders',          pos:'CM',  grp:'MID' },
-      { num:17, name:'Gravenberch',        pos:'CM',  grp:'MID' },
-      { num:18, name:'Schouten',           pos:'CDM', grp:'MID' },
-      { num:19, name:'Koopmeiners',        pos:'CAM', grp:'MID' },
-      { num:20, name:'Xavi Simons',        pos:'CAM', grp:'MID' },
-      { num:21, name:'Q. Timber',          pos:'CM',  grp:'MID' },
-      { num:22, name:'Gakpo',              pos:'LW',  grp:'FWD' },
-      { num:23, name:'D. Malen',           pos:'RW',  grp:'FWD' },
-      { num:24, name:'M. Depay',           pos:'ST',  grp:'FWD' },
-      { num:25, name:'Noa Lang',           pos:'LW',  grp:'FWD' },
-      { num:26, name:'Brobbey',            pos:'ST',  grp:'FWD' },
+      { num:2,  name:'J. Timber',          pos:'CB',  grp:'DEF' },
+      { num:5,  name:'Aké',                pos:'CB',  grp:'DEF' },
+      { num:6,  name:'Van de Ven',         pos:'CB',  grp:'DEF' },
+      { num:3,  name:'De Ligt',            pos:'CB',  grp:'DEF' },
+      { num:15, name:'De Vrij',            pos:'CB',  grp:'DEF' },
+      { num:24, name:'Van Hecke',          pos:'CB',  grp:'DEF' },
+      { num:22, name:'Dumfries',           pos:'RB',  grp:'DEF' },
+      { num:20, name:'Frimpong',           pos:'RB',  grp:'DEF' },
+      { num:27,  name:'Geertruida',         pos:'RB',  grp:'DEF' },
+      { num:12, name:'J. Hato',            pos:'LB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:21, name:'F. de Jong',         pos:'CDM', grp:'MID' },
+      { num:14, name:'Reijnders',          pos:'CM',  grp:'MID' },
+      { num:8,  name:'Gravenberch',        pos:'CM',  grp:'MID' },
+      { num:26, name:'Schouten',           pos:'CDM', grp:'MID' },
+      { num:7,  name:'Koopmeiners',        pos:'CAM', grp:'MID' },
+      { num:19, name:'Xavi Simons',        pos:'CAM', grp:'MID' },
+      { num:16, name:'Q. Timber',          pos:'CM',  grp:'MID' },
+      
+      // FORWARDS
+      { num:11, name:'Gakpo',              pos:'LW',  grp:'FWD' },
+      { num:10, name:'D. Malen',           pos:'RW',  grp:'FWD' },
+      { num:9,  name:'M. Depay',           pos:'ST',  grp:'FWD' },
+      { num:17, name:'Noa Lang',           pos:'LW',  grp:'FWD' },
+      { num:18, name:'Brobbey',            pos:'ST',  grp:'FWD' },
+      { num:25, name:'Weghorst',           pos:'ST',  grp:'FWD' },
     ]
   },
 
@@ -853,32 +1093,39 @@ const TEAMS = {
     id:'england', name:'England', emoji:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', slogan:'Three Lions',
     primary:'#CF081F', accent:'#FFFFFF', flag:['#FFFFFF','#CF081F','#FFFFFF'],
     squad:[
+      // GOALKEEPERS
       { num:1,  name:'Pickford',           pos:'GK',  grp:'GK'  },
-      { num:2,  name:'D. Henderson',       pos:'GK',  grp:'GK'  },
-      { num:3,  name:'J. Trafford',        pos:'GK',  grp:'GK'  },
-      { num:4,  name:'Reece James',        pos:'RB',  grp:'DEF' },
-      { num:5,  name:'Ben White',          pos:'RB',  grp:'DEF' },
-      { num:6,  name:'John Stones',        pos:'CB',  grp:'DEF' },
-      { num:7,  name:'Marc Guéhi',         pos:'CB',  grp:'DEF' },
-      { num:8,  name:'Ezri Konsa',         pos:'CB',  grp:'DEF' },
-      { num:9,  name:'H. Maguire',         pos:'CB',  grp:'DEF' },
-      { num:10, name:'Lewis Hall',         pos:'LB',  grp:'DEF' },
-      { num:11, name:'Livramento',         pos:'RB',  grp:'DEF' },
-      { num:12, name:'Declan Rice',        pos:'CDM', grp:'MID' },
-      { num:13, name:'Bellingham',         pos:'CAM', grp:'MID' },
-      { num:14, name:'K. Mainoo',          pos:'CM',  grp:'MID' },
-      { num:15, name:'A. Wharton',         pos:'CDM', grp:'MID' },
-      { num:16, name:'Cole Palmer',        pos:'CAM', grp:'MID' },
-      { num:17, name:'M. Rogers',          pos:'CAM', grp:'MID' },
-      { num:18, name:'Gibbs-White',        pos:'CM',  grp:'MID' },
-      { num:19, name:'Harry Kane',         pos:'ST',  grp:'FWD' },
-      { num:20, name:'Bukayo Saka',        pos:'RW',  grp:'FWD' },
-      { num:21, name:'Phil Foden',         pos:'CAM', grp:'MID' },
-      { num:22, name:'A. Gordon',          pos:'LW',  grp:'FWD' },
-      { num:23, name:'Rashford',           pos:'LW',  grp:'FWD' },
-      { num:24, name:'J. Bowen',           pos:'RW',  grp:'FWD' },
-      { num:25, name:'Eze',                pos:'CAM', grp:'MID' },
-      { num:26, name:'D. Solanke',         pos:'ST',  grp:'FWD' },
+      { num:13, name:'D. Henderson',       pos:'GK',  grp:'GK'  },
+      { num:23, name:'J. Trafford',        pos:'GK',  grp:'GK'  },
+      
+      // DEFENDERS
+      { num:2,  name:'Reece James',        pos:'RB',  grp:'DEF' },
+      { num:12, name:'Ben White',          pos:'RB',  grp:'DEF' },
+      { num:5,  name:'John Stones',        pos:'CB',  grp:'DEF' },
+      { num:6,  name:'Marc Guéhi',         pos:'CB',  grp:'DEF' },
+      { num:14, name:'Ezri Konsa',         pos:'CB',  grp:'DEF' },
+      { num:15, name:'H. Maguire',         pos:'CB',  grp:'DEF' },
+      { num:3,  name:'Lewis Hall',         pos:'LB',  grp:'DEF' },
+      { num:24, name:'Livramento',         pos:'RB',  grp:'DEF' },
+      
+      // MIDFIELDERS
+      { num:4,  name:'Declan Rice',        pos:'CDM', grp:'MID' },
+      { num:22, name:'Bellingham',         pos:'CAM', grp:'MID' },
+      { num:8,  name:'K. Mainoo',          pos:'CM',  grp:'MID' },
+      { num:16, name:'A. Wharton',         pos:'CDM', grp:'MID' },
+      { num:10, name:'Cole Palmer',        pos:'CAM', grp:'MID' },
+      { num:18, name:'M. Rogers',          pos:'CAM', grp:'MID' },
+      { num:17, name:'Gibbs-White',        pos:'CM',  grp:'MID' },
+      { num:11, name:'Phil Foden',         pos:'CAM', grp:'MID' },
+      { num:26, name:'Eze',                pos:'CAM', grp:'MID' },
+      
+      // FORWARDS
+      { num:9,  name:'Harry Kane',         pos:'ST',  grp:'FWD' },
+      { num:7,  name:'Bukayo Saka',        pos:'RW',  grp:'FWD' },
+      { num:19, name:'A. Gordon',          pos:'LW',  grp:'FWD' },
+      { num:21, name:'Rashford',           pos:'LW',  grp:'FWD' },
+      { num:20, name:'J. Bowen',           pos:'RW',  grp:'FWD' },
+      { num:25, name:'D. Solanke',         pos:'ST',  grp:'FWD' },
     ]
   },
 };
@@ -1514,6 +1761,11 @@ function saveLineupJPG() {
 }
 
 function _drawAndDownload() {
+  if (!currentFormation) {
+    toast('Please select a formation first!', 'err');
+    return;
+  }
+  
   const team = TEAMS[activeTeamId];
   const f    = team.flag;
   const stripes = f.length === 2 ? [f[0], f[1], f[0]] : f;
@@ -1531,13 +1783,13 @@ function _drawAndDownload() {
   //   - Pitch aspect ratio 1:1.25 (matches CSS padding-bottom:125%)
   //   - DOT_R and fonts derived from dashboard CSS (.p-circle=33px, .p-name=8.5px)
   const W = 1100, HEADER_H = 110, FOOTER_H = 32;
-  const PITCH_W = 420;                         // pitch width in logical px
-  const PITCH_H = Math.round(PITCH_W * 1.25);  // 525px — exact 1:1.25 ratio
-  const PITCH_X = 18, PITCH_Y = HEADER_H + 10;
+  const PITCH_W = 480;                         // pitch width (bigger than before)
+  const PITCH_H = Math.round(PITCH_W * 1.25);  // 600px — exact 1:1.25 ratio
+  const PITCH_X = 16, PITCH_Y = HEADER_H + 10;
   const BODY_H  = PITCH_H + 20;                // body height wraps the pitch
   const H = HEADER_H + BODY_H + FOOTER_H;
-  const LIST_X  = PITCH_X + PITCH_W + 18;
-  const LIST_W  = W - LIST_X - 14;
+  const LIST_X  = PITCH_X + PITCH_W + 16;      // list starts after pitch
+  const LIST_W  = W - LIST_X - 12;             // narrower list width
   const STRIPE_H = 7;
 
   const canvas = document.createElement('canvas');
@@ -1610,20 +1862,27 @@ function _drawAndDownload() {
   ctx.fillText(team.slogan, 80, STRIPE_H + 80);
 
   // ── Header: formation badge ──────────────────────────────────────
-  const badgeW = 88, badgeH = 36, badgeX = W - badgeW - 20, badgeY = STRIPE_H + 18;
-  roundRect(badgeX, badgeY, badgeW, badgeH, 6);
-  ctx.fillStyle = accentCol;
-  ctx.fill();
-  ctx.font = 'bold 22px Bebas Neue, sans-serif';
-  ctx.fillStyle = team.accent === '#FFFFFF' ? team.primary : '#000';
-  ctx.textAlign = 'center';
-  ctx.fillText(currentFormation, badgeX + badgeW/2, badgeY + 25);
-  ctx.textAlign = 'left';
-  ctx.font = '600 8px Outfit, sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
-  ctx.textAlign = 'center';
-  ctx.fillText('FORMATION', badgeX + badgeW/2, badgeY + badgeH + 12);
-  ctx.textAlign = 'left';
+  if (currentFormation) {
+    const badgeW = 92, badgeH = 38, badgeX = W - badgeW - 18, badgeY = STRIPE_H + 16;
+    roundRect(badgeX, badgeY, badgeW, badgeH, 7);
+    ctx.fillStyle = accentCol;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.font = 'bold 24px Bebas Neue, sans-serif';
+    ctx.fillStyle = team.accent === '#FFFFFF' ? team.primary : '#000';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(currentFormation, badgeX + badgeW/2, badgeY + badgeH/2);
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    ctx.font = '600 8px Outfit, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.textAlign = 'center';
+    ctx.fillText('FORMATION', badgeX + badgeW/2, badgeY + badgeH + 13);
+    ctx.textAlign = 'left';
+  }
 
   // ── Divider line under header ────────────────────────────────────
   ctx.strokeStyle = 'rgba(255,255,255,0.08)';
@@ -1715,7 +1974,10 @@ function _drawAndDownload() {
   const dotData = xi.map(({ slot, player: p }) => {
     const dotX   = px + (slot.left / 100) * pw;
     const dotY   = py + (slot.top  / 100) * ph;
-    const txt    = p.name.split(' ')[0].toUpperCase(); // first name only to avoid overlap
+    // Smart name: if first part is initial (≤2 chars), use second part
+    const parts = p.name.split(' ');
+    const first = parts[0];
+    const txt = (first.length <= 2 && parts.length > 1 ? parts[1] : first).toUpperCase();
     const tw     = ctx.measureText(txt).width;
     const lw     = tw + LABEL_PAD;
     return { dotX, dotY, txt, lw, lh: LH,
@@ -1924,12 +2186,18 @@ function _drawAndDownload() {
   });
 
   // ── Download ─────────────────────────────────────────────────────
-  const link = document.createElement('a');
-  const slug = team.name.toLowerCase().replace(/\s+/g, '-');
-  link.download = `${slug}-xi-${currentFormation.replace(/-/g,'')}.jpg`;
-  link.href = canvas.toDataURL('image/jpeg', 0.93);
-  link.click();
-  toast('📸 Lineup saved!', 'ok');
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const slug = team.name.toLowerCase().replace(/\s+/g, '-');
+    link.download = `${slug}-xi-${currentFormation.replace(/-/g,'')}.jpg`;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast('📸 Lineup saved!', 'ok');
+  }, 'image/jpeg', 0.93);
 }
 
 // ══════════════════════════════════════════
