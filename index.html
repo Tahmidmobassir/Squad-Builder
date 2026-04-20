@@ -555,6 +555,25 @@ tbody tr:hover .row-status:not(.in-xi-status) { border-color: rgba(255,255,255,.
     font-size: 7px; 
   }
 }
+
+/* ── FOOTER CREDIT ── */
+.footer-credit {
+  position: relative; z-index: 1;
+  text-align: center; padding: 32px 20px 24px;
+  margin-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.footer-credit p {
+  color: var(--muted); font-size: 11px;
+  font-weight: 400; letter-spacing: 0.5px;
+}
+.footer-credit p a {
+  color: var(--t-accent); text-decoration: none;
+  font-weight: 500; transition: color 0.3s;
+}
+.footer-credit p a:hover {
+  color: var(--white);
+}
 </style>
 </head>
 <body>
@@ -741,6 +760,11 @@ tbody tr:hover .row-status:not(.in-xi-status) { border-color: rgba(255,255,255,.
 
 <!-- TOAST -->
 <div id="toast"><span id="tIco">⚠️</span><span id="tMsg"></span></div>
+
+<!-- FOOTER CREDIT -->
+<footer class="footer-credit">
+  <p>Created by Tahmid Mobassir Khan</p>
+</footer>
 
 <script>
 // ╔══════════════════════════════════════════════════════════════════╗
@@ -2172,6 +2196,13 @@ function _drawAndDownload() {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   ctx.fillText('FIFA WORLD CUP 2026  ·  BEST XI BUILDER', 20, fy + FOOTER_H/2);
+
+  // Creator credit (center)
+  ctx.font = '400 7px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  ctx.textAlign = 'center';
+  ctx.fillText('Created by Tahmid Mobassir Khan', W/2, fy + FOOTER_H/2);
+  ctx.textAlign = 'left';
 
   // Mini flag stripes (bottom-right)
   const msw = 18, msh = 5, msGap = 3;
